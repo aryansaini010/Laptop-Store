@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Laptops - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles - Consistent with admin pages */
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --secondary-color: #333; /* Dark grey */
+            --accent-color: #ffcc00; /* Yellow */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545;
+            --dark-bg: #222;
+            --info-color: #17a2b8;
+            --success-color: #28a745;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header { box-shadow: var(--card-shadow); background-color: #fff; }
+        /* Removed .top-bar styles as it's not in the screenshot */
+
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px; /* Space between logo, search, and icons */
+        }
+        .main-nav .logo {
+            font-size: 2.2em; /* Slightly larger logo */
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            flex-shrink: 0; /* Prevent logo from shrinking */
+        }
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1; /* Allows search bar to take available space */
+            max-width: 600px; /* Increased max-width for wider search bar */
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .main-nav .search-bar input[type="text"] {
+            border: none;
+            padding: 10px 15px;
+            flex-grow: 1;
+            font-size: 1em;
+            outline: none;
+        }
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+        .main-nav .nav-icons {
+            display: flex;
+            gap: 20px;
+            flex-shrink: 0; /* Prevent icons from shrinking */
+        }
+        .main-nav .nav-icons a {
+            color: var(--secondary-color);
+            font-size: 1.8em; /* Adjusted icon size */
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative; /* Crucial for positioning the count badge */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center;
+            gap: 2px; /* Small gap between icon and text */
+        }
+        .main-nav .nav-icons a:hover {
+            color: var(--primary-color);
+        }
+        .main-nav .nav-icons .nav-icon-text {
+            font-size: 0.5em; /* Smaller text for "Wishlist" and "Cart" */
+            font-weight: bold;
+            color: var(--text-dark); /* Ensure text is dark */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+        .main-nav .nav-icons .cart-count {
+            position: absolute;
+            top: -8px; /* Move up to be superscript */
+            right: -8px; /* Move right to be superscript */
+            background-color: var(--accent-color); /* Yellow color from screenshot */
+            color: var(--dark-bg); /* Dark text on yellow */
+            font-size: 0.7em;
+            padding: 2px 6px;
+            border-radius: 50%; /* Make it circular */
+            font-weight: bold;
+            line-height: 1;
+            min-width: 18px; /* Ensure it's circular even with single digit */
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Subtle shadow */
+            display: flex; /* For centering content within the circle */
+            justify-content: center;
+            align-items: center;
+            height: 18px; /* Ensure it's circular even with single digit */
+        }
+        .mobile-menu-button {
+            background: none; border: none; color: var(--primary-color);
+            font-size: 1.8em; cursor: pointer; display: none;
+        }
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            display: block;
+            max-height: none;
+            overflow: visible;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            box-shadow: var(--card-shadow); /* Added shadow for consistency */
+        }
+        .category-nav .container {
+            display: flex;
+            justify-content: flex-start; /* Align links to the left */
+            align-items: center;
+        }
+        .category-nav .nav-links {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; justify-content: flex-start;
+        }
+        .category-nav .nav-links li { margin-right: 30px; position: relative; }
+        .category-nav .nav-links li a {
+            color: var(--text-light); text-decoration: none; padding: 10px 0;
+            font-weight: bold; display: block; transition: color 0.3s ease;
+        }
+        .category-nav .nav-links li a:hover { color: #f0f0f0; }
+
+        /* Active category link style (like "Laptops" in screenshot) */
+        .category-nav .nav-links li .active-category-link {
+            border-bottom: 3px solid var(--accent-color); /* Yellow underline */
+            padding-bottom: 7px; /* Adjust padding to keep text aligned */
+        }
+
+        /* Category Dropdown Styles */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            padding: 10px 0;
+            top: 100%; /* Position below the parent link */
+            left: 0;
+            margin-top: 5px; /* Space between parent and dropdown */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: var(--text-dark);
+            padding: 8px 15px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal;
+            transition: background-color 0.2s ease;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: var(--background-light);
+            color: var(--primary-color);
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        /* Products Page Specific Styles */
+        .products-page-main {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        .products-page-main h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            color: var(--text-dark);
+            position: relative;
+            text-align: center;
+        }
+        .products-page-main h1::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+        .category-section h2 {
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+            justify-content: center; /* Center grid items */
+        }
+
+        .product-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px; /* Fixed height for images */
+            overflow: hidden;
+            position: relative;
+            background-color: #f0f0f0; /* Placeholder background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-action-buttons {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover .product-action-buttons {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background-color: rgba(76, 175, 80, 0.9); /* Primary color with transparency */
+            color: var(--text-light);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background-color: var(--button-hover-primary);
+            transform: scale(1.1);
+        }
+
+        .action-btn.wishlist-btn {
+            background-color: rgba(255, 99, 71, 0.9); /* Tomato color for wishlist */
+        }
+        .action-btn.wishlist-btn:hover {
+            background-color: #e5533d;
+        }
+
+
+        .product-info {
+            padding: 20px;
+            text-align: center;
+            flex-grow: 1; /* Allows info section to expand */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Pushes button to bottom */
+        }
+
+        .product-name {
+            font-size: 1.4em;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .product-price {
+            font-size: 1.2em;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%; /* Full width button */
+            margin-top: auto; /* Pushes button to the bottom */
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: var(--button-hover-primary);
+            transform: translateY(-2px);
+        }
+
+        .message-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .message-box.success {
+            background-color: var(--success-color);
+            color: var(--text-light);
+        }
+        .message-box.error {
+            background-color: var(--error-color);
+            color: var(--text-light);
+        }
+        .message-box.show {
+            display: flex;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        footer {
+            background-color: var(--dark-bg); color: #f4f4f4;
+            padding: 40px 0 20px; margin-top: 40px; font-size: 0.9em;
+        }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; }
+        .footer-section { flex: 1; min-width: 250px; margin-bottom: 20px; padding-right: 20px; }
+        .footer-section:last-child { padding-right: 0; }
+        .footer-section h3 { color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section .logo-text { font-size: 1.8em; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            justify-content: center;
+        }
+
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none; /* Keeps textarea inline */
+            height: 40px; /* Match height for alignment */
+        }
+
+        .footer-section.contact-form textarea {
+            flex: 2; /* Slightly larger than email field */
+        }
+
+        .footer-section.contact-form .contact-btn {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px; /* Align with fields */
+        }
+
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            /* Removed top-bar from HTML, so these are not needed */
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .main-nav .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+            }
+
+            .category-nav.active {
+                overflow: visible; /* Ensure content is visible when active */
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Product grid responsiveness */
+            .product-grid {
+                grid-template-columns: 1fr; /* Stack products vertically on small screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html"><i class="fas fa-heart"></i><span class="nav-icon-text">Wishlist</span> <span id="wishlist-quantity" class="cart-count">0</span></a>
+                    <a href="add_to_cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-icon-text">Cart</span> <span id="cart-quantity" class="cart-count">0</span></a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="products.html" class="dropbtn-category active-category-link">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="products.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="products.html#business-laptops">Business Laptops</a>
+                            <a href="products.html#ultrabooks">Ultrabooks</a>
+                            <a href="products.html#2-in-1-laptops">2-in-1 Laptops</a>
+                            <a href="products.html#student-laptops">Student Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container products-page-main">
+        <h1>Explore Our Laptop Collection</h1>
+        <div id="messageBox" class="message-box"></div>
+
+        <!-- Section for Gaming Laptops -->
+        <div class="category-section" id="gaming-laptops">
+            <h2>Gaming Laptops</h2>
+            <div class="product-grid" id="gaming-laptops-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading gaming laptops...</p>
+            </div>
+        </div>
+
+        <!-- Section for Business Laptops -->
+        <div class="category-section" id="business-laptops">
+            <h2>Business Laptops</h2>
+            <div class="product-grid" id="business-laptops-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading business laptops...</p>
+            </div>
+        </div>
+
+        <!-- Section for Ultrabooks -->
+        <div class="category-section" id="ultrabooks">
+            <h2>Ultrabooks</h2>
+            <div class="product-grid" id="ultrabooks-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading ultrabooks...</p>
+            </div>
+        </div>
+
+        <!-- Section for 2-in-1 Laptops -->
+        <div class="category-section" id="2-in-1-laptops">
+            <h2>2-in-1 Laptops</h2>
+            <div class="product-grid" id="2-in-1-laptops-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading 2-in-1 laptops...</p>
+            </div>
+        </div>
+
+        <!-- Section for Student Laptops -->
+        <div class="category-section" id="student-laptops">
+            <h2>Student Laptops</h2>
+            <div class="product-grid" id="student-laptops-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading student laptops...</p>
+            </div>
+        </div>
+
+        <!-- Fallback/Other Laptops Section (if any products don't match specific categories) -->
+        <div class="category-section" id="other-laptops">
+            <h2>Other Laptops</h2>
+            <div class="product-grid" id="other-laptops-grid">
+                <p style="grid-column: 1 / -1; text-align: center;">Loading other laptops...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from existing pages (e.g., admin_dashboard) for consistency */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222;
+            --info-color: #17a2b8; /* For info alerts */
+            --success-color: #28a745; /* Green for success messages */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            box-shadow: var(--card-shadow);
+            background-color: #fff;
+            border-bottom: 1px solid #eee; /* Subtle border at the bottom of the entire header */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            padding: 10px 0; /* Increased padding */
+            font-size: 0.85em; /* Slightly smaller font for top bar info */
+        }
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar .contact-info span {
+            margin-right: 25px; /* Increased spacing */
+        }
+        .top-bar .contact-info i {
+            margin-right: 8px; /* Increased spacing */
+            color: var(--primary-color);
+        }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+        .user-actions .user-dropdown {
+            position: relative;
+            cursor: pointer;
+            padding: 5px 0; /* Added padding for click area */
+        }
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 32px; /* Slightly larger icon */
+            height: 32px; /* Slightly larger icon */
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 1em; /* Adjusted font size */
+            margin-right: 8px; /* Increased spacing */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow */
+        }
+        .user-actions .user-name {
+            font-size: 0.95em; /* Slightly larger text */
+            margin-right: 5px;
+            color: var(--text-light);
+        }
+        .user-actions .dropdown-arrow {
+            font-size: 0.7em; /* Adjusted arrow size */
+            color: var(--text-light);
+            transition: transform 0.3s ease;
+        }
+        .user-dropdown:hover .dropdown-arrow {
+            transform: rotate(180deg); /* Rotate arrow on hover */
+        }
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 8px; /* More rounded corners */
+            padding: 10px 0; /* Adjusted padding */
+            margin-top: 8px; /* Space between dropdown and user info */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .dropdown-content span {
+            display: block;
+            padding: 8px 15px; /* Padding for text items */
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+        .dropdown-content a {
+            color: var(--error-color);
+            text-decoration: none;
+            display: block;
+            padding: 8px 15px; /* Padding for link items */
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dropdown-content a:hover {
+            background-color: var(--background-light);
+            color: #c82333;
+        }
+
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff;
+            /* Removed border-bottom as it's now on header */
+        }
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+        .main-nav .logo {
+            font-size: 2.5em; /* Larger logo for main nav */
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        /* Search bar and nav icons are hidden for admin panel as per typical admin UI */
+        .main-nav .search-bar, .main-nav .nav-icons { display: none; }
+
+        .mobile-menu-button {
+            background: none; border: none; color: var(--primary-color);
+            font-size: 1.8em; cursor: pointer; display: none;
+        }
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 12px 0; /* Slightly more padding */
+            display: block;
+            max-height: none;
+            overflow: visible;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            /* Removed box-shadow as it's now on header */
+        }
+        .category-nav .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .category-nav .nav-links {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; justify-content: flex-start;
+            gap: 35px; /* Increased gap between nav links */
+        }
+        .category-nav .nav-links li {
+            position: relative;
+        }
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 8px 0; /* Adjusted padding */
+            font-weight: bold;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Active category link style */
+        .category-nav .nav-links li .active-category-link {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 5px; /* Adjusted padding to align with other links */
+        }
+
+        /* Admin Content Specific Styles */
+        .admin-content {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        .admin-content h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            color: var(--text-dark);
+            position: relative;
+            text-align: center;
+        }
+        .admin-content h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+        .admin-section {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        .admin-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.8em;
+        }
+        .admin-section h3#formTitle { /* New ID for dynamic title */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-section h3#formTitle .btn-secondary {
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+
+
+        /* Form Styles */
+        .product-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding in width */
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        .full-width {
+            grid-column: 1 / -1; /* Span across all columns */
+        }
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+        .btn-primary:hover {
+            background-color: var(--button-hover-primary);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--button-hover-secondary);
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background-color: var(--error-color);
+            color: var(--text-light);
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Table Styles */
+        .product-table-container {
+            overflow-x: auto; /* Enable horizontal scrolling on small screens */
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .product-table th,
+        .product-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .product-table th {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            font-weight: bold;
+            white-space: nowrap; /* Prevent headers from wrapping */
+        }
+        .product-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .product-table tr:hover {
+            background-color: #f0f0f0;
+        }
+        .product-table td img {
+            max-width: 60px;
+            height: auto;
+            border-radius: 4px;
+        }
+        .product-actions {
+            display: flex;
+            gap: 8px;
+            white-space: nowrap; /* Keep buttons on one line */
+        }
+        .product-actions .btn {
+            padding: 8px 12px;
+            font-size: 0.85em;
+        }
+
+        /* Message Box */
+        .message-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .message-box.success {
+            background-color: var(--success-color);
+            color: var(--text-light);
+        }
+        .message-box.error {
+            background-color: var(--error-color);
+            color: var(--text-light);
+        }
+        .message-box.info {
+            background-color: var(--info-color);
+            color: var(--text-light);
+        }
+        .message-box.show {
+            display: flex;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        footer {
+            background-color: var(--dark-bg); color: #f4f4f4;
+            padding: 40px 0 20px; margin-top: 40px; font-size: 0.9em;
+        }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; }
+        .footer-section { flex: 1; min-width: 250px; margin-bottom: 20px; padding-right: 20px; }
+        .footer-section:last-child { padding-right: 0; }
+        .footer-section h3 { color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section .logo-text { font-size: 1.8em; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            justify-content: center;
+        }
+
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none; /* Keeps textarea inline */
+            height: 40px; /* Match height for alignment */
+        }
+
+        .footer-section.contact-form textarea {
+            flex: 2; /* Slightly larger than email field */
+        }
+
+        .footer-section.contact-form .contact-btn {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px; /* Align with fields */
+        }
+
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .main-nav .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+            }
+
+            .category-nav.active {
+                overflow: visible; /* Ensure content is visible when active */
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Form responsiveness */
+            .product-form {
+                grid-template-columns: 1fr; /* Stack form fields vertically */
+            }
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions">
+                    <div class="user-dropdown">
+                        <span class="user-icon" id="userInitialIcon">A</span>
+                        <span id="userNameDisplay" class="user-name">Welcome, Admin</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        <div class="dropdown-content">
+                            <span id="dropdownUserName"></span>
+                            <span id="dropdownUserEmail"></span>
+                            <a href="#" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <div class="container">
+                <a href="admin_dashboard.html" class="logo">Admin Panel</a>
+                <div class="search-bar" style="display:none;"></div>
+                <div class="nav-icons" style="display:none;"></div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="admin_dashboard.html">Dashboard</a></li>
+                    <li><a href="admin_orders.html">Manage Orders</a></li>
+                    <li><a href="admin_users.html">Manage Users</a></li>
+                    <li><a href="admin_products.html" class="active-category-link">Manage Products</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container admin-content">
+        <h2>Manage Products</h2>
+        <p>Add, view, and manage products in your store.</p>
+
+        <div class="admin-section add-product-section">
+            <h3 id="formTitle">Add New Product</h3>
+            <div id="messageBox" class="message-box"></div>
+            <form id="addProductForm" class="product-form">
+                <input type="hidden" id="editProductId"> <div class="form-group">
+                    <label for="productName">Product Name:</label>
+                    <input type="text" id="productName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category:</label>
+                    <select id="productCategory" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Gaming Laptops">Gaming Laptops</option>
+                        <option value="Business Laptops">Business Laptops</option>
+                        <option value="Ultrabooks">Ultrabooks</option>
+                        <option value="2-in-1 Laptops">2-in-1 Laptops</option>
+                        <option value="Student Laptops">Student Laptops</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Desktops">Desktops</option>
+                        <option value="Monitors">Monitors</option>
+                        <option value="Printers & Scanners">Printers & Scanners</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Price (₹):</label>
+                    <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="productStock">Stock:</label>
+                    <input type="number" id="productStock" name="stock" min="0" required>
+                </div>
+                <div class="form-group full-width">
+                    <label for="productDescription">Description:</label>
+                    <textarea id="productDescription" name="description" rows="4" required></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="productImageUrl">Image URL:</label>
+                    <input type="text" id="productImageUrl" name="imageUrl" placeholder="e.g., https://placehold.co/600x400/000000/FFFFFF?text=Product" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="submitProductBtn">Add Product</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-section existing-products-section">
+            <h3>Existing Products</h3>
+            <div class="product-table-container">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr><td colspan="6" style="text-align: center;">Loading products...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore Admin</h3>
+                    <p>Admin control panel for managing your Laptop Store operations.</p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="admin_dashboard.html">Dashboard</a></li>
+                        <li><a href="admin_orders.html">Manage Orders</a></li>
+                        <li><a href="admin_products.html">Manage Products</a></li>
+                        <li><a href="#">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Admin</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Admin Panel
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your backend URL
+
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userInitialIcon = document.getElementById('userInitialIcon');
+            const dropdownUserName = document.getElementById('dropdownUserName');
+            const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const categoryNav = document.getElementById('categoryNav');
+
+            const addProductForm = document.getElementById('addProductForm');
+            const productsTableBody = document.getElementById('productsTableBody');
+            const messageBox = document.getElementById('messageBox');
+
+            const formTitle = document.getElementById('formTitle'); // New
+            const editProductId = document.getElementById('editProductId'); // New
+            const submitProductBtn = document.getElementById('submitProductBtn'); // New
+            const cancelEditBtn = document.getElementById('cancelEditBtn'); // New
+
+            // Form input elements
+            const productNameInput = document.getElementById('productName');
+            const productCategorySelect = document.getElementById('productCategory');
+            const productPriceInput = document.getElementById('productPrice');
+            const productStockInput = document.getElementById('productStock');
+            const productDescriptionTextarea = document.getElementById('productDescription');
+            const productImageUrlInput = document.getElementById('productImageUrl');
+
+            let allProducts = []; // To store products loaded from the API for easy editing
+
+            // Check admin auth (redirect if not admin)
+            const adminToken = localStorage.getItem('adminToken');
+            const adminUser = JSON.parse(localStorage.getItem('adminUser'));
+            if (!adminToken || !adminUser || !adminUser.isAdmin) {
+                window.location.href = 'admin_login.html';
+            } else {
+                userNameDisplay.textContent = `Welcome, ${adminUser.name || 'Admin'}`;
+                userInitialIcon.textContent = (adminUser.name ? adminUser.name.charAt(0) : 'A').toUpperCase();
+                dropdownUserName.textContent = adminUser.name || 'Admin User';
+                dropdownUserEmail.textContent = adminUser.email || 'admin@example.com';
+            }
+
+            // Logout
+            adminLogoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = 'admin_login.html';
+            });
+
+            // Toggle menu for mobile
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function () {
+                    categoryNav.classList.toggle('active');
+                    if (categoryNav.classList.contains('active')) {
+                        categoryNav.style.maxHeight = categoryNav.scrollHeight + 'px';
+                        categoryNav.style.padding = '10px 0';
+                    } else {
+                        categoryNav.style.maxHeight = '0';
+                        categoryNav.style.padding = '0';
+                    }
+                });
+            }
+
+            // Responsive reset on resize
+            const mediaQuery = window.matchMedia('(max-width: 768px)');
+            function handleMediaQueryChange(e) {
+                if (!e.matches) { // If desktop view
+                    categoryNav.style.maxHeight = 'none';
+                    categoryNav.style.overflow = 'visible';
+                    categoryNav.style.padding = '10px 0';
+                    categoryNav.classList.remove('active');
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.display = 'flex';
+                        navLinks.style.flexDirection = 'row';
+                    }
+                } else { // If mobile view
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.flexDirection = 'column';
+                        if (!categoryNav.classList.contains('active')) {
+                            categoryNav.style.maxHeight = '0';
+                            categoryNav.style.overflow = 'hidden';
+                            categoryNav.style.padding = '0';
+                        }
+                    }
+                }
+            }
+            mediaQuery.addListener(handleMediaQueryChange);
+            handleMediaQueryChange(mediaQuery); // Initial check
+
+            // Function to display messages to the user
+            function showMessage(message, type = 'success') {
+                messageBox.textContent = message;
+                messageBox.className = `message-box show ${type}`; // Reset classes and add new ones
+                setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, 5000); // Hide after 5 seconds
+            }
+
+            // Function to reset the form to 'Add Product' mode
+            function resetFormToAddMode() {
+                addProductForm.reset();
+                editProductId.value = ''; // Clear the hidden ID
+                formTitle.innerHTML = 'Add New Product'; // Reset title
+                submitProductBtn.textContent = 'Add Product';
+                cancelEditBtn.style.display = 'none'; // Hide cancel button
+                showMessage('Form reset to Add New Product mode.', 'info');
+            }
+
+            // Function to load products into the table
+            async function loadProducts() {
+                productsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Loading products...</td></tr>';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/products`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        console.error('Authentication failed. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.message || 'Failed to fetch products');
+                    }
+
+                    const result = await response.json();
+                    allProducts = result.products; // Store fetched products
+
+                    productsTableBody.innerHTML = ''; // Clear loading message
+
+                    if (allProducts.length === 0) {
+                        productsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No products found. Add a new product above!</td></tr>';
+                        return;
+                    }
+
+                    allProducts.forEach(product => {
+                        const row = productsTableBody.insertRow();
+                        row.innerHTML = `
+                            <td><img src="${product.imageUrl || 'https://placehold.co/60x60/E0E0E0/333333?text=No+Image'}" alt="${product.name}" onerror="this.onerror=null;this.src='https://placehold.co/60x60/E0E0E0/333333?text=No+Image';"></td>
+                            <td>${product.name}</td>
+                            <td>${product.category}</td>
+                            <td>₹${product.price.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td>${product.stock.toLocaleString('en-IN')}</td>
+                            <td class="product-actions">
+                                <button class="btn btn-secondary edit-btn" data-id="${product._id}">Edit</button>
+                                <button class="btn btn-danger delete-btn" data-id="${product._id}">Delete</button>
+                            </td>
+                        `;
+                    });
+
+                    // Add event listeners for edit/delete buttons
+                    productsTableBody.querySelectorAll('.edit-btn').forEach(button => {
+                        button.addEventListener('click', handleEditProduct);
+                    });
+                    productsTableBody.querySelectorAll('.delete-btn').forEach(button => {
+                        button.addEventListener('click', handleDeleteProduct);
+                    });
+
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    productsTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--error-color);">Failed to load products: ${error.message}</td></tr>`;
+                    showMessage(`Failed to load products: ${error.message}`, 'error');
+                }
+            }
+
+            // Function to handle adding or updating a product
+            addProductForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(addProductForm);
+                const productData = {};
+                formData.forEach((value, key) => {
+                    productData[key] = value;
+                });
+
+                // Convert price and stock to numbers
+                productData.price = parseFloat(productData.price);
+                productData.stock = parseInt(productData.stock, 10);
+
+                // Basic client-side validation
+                if (!productData.name || !productData.category || isNaN(productData.price) || isNaN(productData.stock) || !productData.description || !productData.imageUrl) {
+                    showMessage('Please fill in all required fields and ensure price/stock are numbers.', 'error');
+                    return;
+                }
+                if (productData.price < 0 || productData.stock < 0) {
+                    showMessage('Price and stock cannot be negative.', 'error');
+                    return;
+                }
+
+                const isEditing = editProductId.value !== ''; // Check if we are in edit mode
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/admin/products/${editProductId.value}` : `${API_BASE_URL}/admin/products`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        },
+                        body: JSON.stringify(productData)
+                    });
+
+                    if (response.status === 401) {
+                        console.error('Authentication failed. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.message || `Failed to ${isEditing ? 'update' : 'add'} product`);
+                    }
+
+                    const result = await response.json();
+                    showMessage(`Product ${isEditing ? 'updated' : 'added'} successfully!`, 'success');
+                    resetFormToAddMode(); // Reset form after successful operation
+                    loadProducts(); // Reload products to show the changes
+                } catch (error) {
+                    console.error(`Error ${isEditing ? 'updating' : 'adding'} product:`, error);
+                    showMessage(`Failed to ${isEditing ? 'update' : 'add'} product: ${error.message}`, 'error');
+                }
+            });
+
+            // Function to handle editing a product
+            function handleEditProduct(event) {
+                const productId = event.target.dataset.id;
+                const productToEdit = allProducts.find(p => p._id === productId);
+
+                if (productToEdit) {
+                    // Populate the form fields
+                    productNameInput.value = productToEdit.name;
+                    productCategorySelect.value = productToEdit.category;
+                    productPriceInput.value = productToEdit.price;
+                    productStockInput.value = productToEdit.stock;
+                    productDescriptionTextarea.value = productToEdit.description;
+                    productImageUrlInput.value = productToEdit.imageUrl;
+
+                    // Set the hidden product ID for update
+                    editProductId.value = productToEdit._id;
+
+                    // Change form title and button text
+                    formTitle.innerHTML = 'Edit Product';
+                    submitProductBtn.textContent = 'Update Product';
+                    cancelEditBtn.style.display = 'inline-block'; // Show cancel button
+
+                    showMessage(`Editing product: ${productToEdit.name}`, 'info');
+                } else {
+                    showMessage('Product not found for editing.', 'error');
+                }
+            }
+
+            // Function to handle deleting a product
+            async function handleDeleteProduct(event) {
+                const productId = event.target.dataset.id;
+
+                // Instead of alert, use a custom modal for confirmation in a real app
+                if (!confirm(`Are you sure you want to delete product ID: ${productId}?`)) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/products/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'x-auth-token': adminToken
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        console.error('Authentication failed. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.message || 'Failed to delete product');
+                    }
+
+                    showMessage('Product deleted successfully!', 'success');
+                    loadProducts(); // Reload products to update the table
+                } catch (error) {
+                    console.error('Error deleting product:', error);
+                    showMessage(`Failed to delete product: ${error.message}`, 'error');
+                }
+            }
+
+            // Event listener for the new "Cancel Edit" button
+            cancelEditBtn.addEventListener('click', resetFormToAddMode);
+
+            // Initial load of products when the page loads
+            loadProducts();
+        });
+    </script>
+</body>
+</html>

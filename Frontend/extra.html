@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Header</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <header>
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="container">
+        <div class="contact-info">
+          <span><i class="fas fa-phone"></i> +91 12345 67890</span>
+          <span><i class="fas fa-envelope"></i> info@example.com</span>
+        </div>
+        <div class="user-actions">
+          <div class="user-dropdown">
+            <div class="user-icon">A</div>
+            <span class="user-name">Ankit</span>
+            <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
+            <div class="dropdown-content">
+              <span><strong>Email:</strong> ankit@example.com</span>
+              <span><strong>Phone:</strong> +91 12345 67890</span>
+              <span><strong>Role:</strong> User</span>
+              <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="main-nav">
+      <div class="container">
+        <a href="#" class="logo">MyLogo</a>
+        <div class="nav-icons">
+          <a href="#">
+            <i class="fas fa-heart"></i>
+            <div class="nav-icon-text">Wishlist <span>3</span></div>
+          </a>
+          <a href="#">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="nav-icon-text">Cart <span>5</span></div>
+          </a>
+          <button class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <style>
+    /* Root Variables */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --accent-color: #f1c40f;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --background-light: #f4f4f4;
+}
+
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-dark);
+  background-color: var(--background-light);
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Top Bar */
+.top-bar {
+  background-color: var(--secondary-color);
+  color: var(--text-light);
+  padding: 8px 0;
+  font-size: 0.9em;
+}
+.top-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.contact-info span {
+  margin-right: 20px;
+}
+.contact-info i {
+  margin-right: 6px;
+}
+
+/* User Actions */
+.user-actions {
+  display: flex;
+  align-items: center;
+}
+.user-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.user-icon {
+  background-color: var(--accent-color);
+  color: var(--text-dark);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+}
+.user-name {
+  font-weight: 500;
+}
+.dropdown-arrow {
+  margin-left: 6px;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background-color: var(--background-light);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  border-radius: 6px;
+  min-width: 200px;
+  z-index: 10;
+}
+.dropdown-content span,
+.dropdown-content a {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+  text-decoration: none;
+}
+.dropdown-content a i {
+  margin-right: 5px;
+}
+.user-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Main Navigation */
+.main-nav {
+  background-color: #fff;
+  padding: 14px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+.main-nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo */
+.main-nav .logo {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-decoration: none;
+  margin-right: auto;
+}
+
+/* Nav Icons */
+.nav-icons {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+.nav-icons a {
+  display: flex;
+  align-items: center;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.9em;
+  position: relative;
+}
+.nav-icons a i {
+  font-size: 1.4em;
+  margin-right: 5px;
+  color: var(--secondary-color);
+}
+.nav-icon-text {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.nav-icon-text span {
+  background-color: var(--accent-color);
+  color: var(--text-dark);
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.7em;
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  text-align: center;
+  transform: translateX(50%);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 1.8em;
+  cursor: pointer;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: block;
+  }
+
+  .nav-icons {
+    gap: 15px;
+  }
+}
+
+  </style>
+
+</body>
+</html>

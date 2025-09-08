@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #333;
+            --accent-color: #ffcc00;
+            --background-light: #f0f8f0;
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545;
+            --dark-bg: #222;
+            --info-color: #17a2b8; /* For info alerts */
+        }
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter for a modern look */
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header { box-shadow: var(--card-shadow); background-color: #fff; }
+        .top-bar {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar .contact-info span { margin-right: 20px; }
+        .top-bar .contact-info i { margin-right: 5px; color: var(--primary-color); }
+        .user-actions { display: flex; align-items: center; gap: 15px; }
+        .user-actions a { color: var(--text-light); text-decoration: none; transition: color 0.3s ease; }
+        .user-actions a:hover { color: var(--accent-color); }
+        .user-actions .user-dropdown { position: relative; cursor: pointer; }
+        .user-actions .user-icon {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 30px; height: 30px; border-radius: 50%;
+            background-color: var(--primary-color); color: white;
+            font-weight: bold; font-size: 0.9em; margin-right: 5px;
+        }
+        .user-actions .user-name { font-size: 0.9em; margin-right: 5px; color: var(--text-light); }
+        .user-actions .dropdown-arrow { font-size: 0.8em; color: var(--text-light); }
+        .user-dropdown .dropdown-content {
+            display: none; position: absolute; background-color: #f9f9f9; min-width: 180px;
+            box-shadow: var(--card-shadow); z-index: 10; top: 100%; right: 0;
+            border-radius: 5px; padding: 10px; margin-top: 5px;
+        }
+        .user-dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content span { display: block; margin: 5px 0; font-size: 0.9em; color: var(--text-dark); }
+        .dropdown-content a {
+            color: var(--error-color); text-decoration: none; display: block;
+            padding: 5px 0; margin-top: 10px; border-top: 1px solid #eee; text-align: center;
+            transition: color 0.3s ease;
+        }
+        .dropdown-content a:hover { color: #c82333; }
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .main-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .main-nav .logo { font-size: 1.8em; font-weight: bold; color: var(--primary-color); text-decoration: none; }
+        .main-nav .search-bar, .main-nav .nav-icons { display: none; }
+        .mobile-menu-button {
+            background: none; border: none; color: var(--primary-color);
+            font-size: 1.8em; cursor: pointer; display: none;
+        }
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0; display: block; max-height: none; overflow: visible;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .category-nav .nav-links {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; justify-content: flex-start;
+        }
+        .category-nav .nav-links li { margin-right: 30px; }
+        .category-nav .nav-links li a {
+            color: var(--text-light); text-decoration: none; padding: 10px 0;
+            font-weight: bold; display: block; transition: color 0.3s ease;
+        }
+        .category-nav .nav-links li a:hover { color: #f0f0f0; }
+        .admin-dashboard {
+            padding: 40px 20px; margin-top: 20px; background-color: #fff;
+            border-radius: 8px; box-shadow: var(--card-shadow);
+        }
+        .admin-dashboard h2 {
+            font-size: 2.5em; margin-bottom: 30px; padding-bottom: 10px;
+            color: var(--text-dark); position: relative; text-align: center;
+        }
+        .admin-dashboard h2::after {
+            content: ''; display: block; width: 100px; height: 3px;
+            background-color: var(--accent-color); margin: 10px auto 0;
+        }
+
+        /* Dashboard Sections */
+        .dashboard-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px; /* Base margin-bottom for all sections */
+        }
+        .dashboard-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px; /* Reduced margin-bottom to move title closer to top, or 20px for default */
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.8em;
+        }
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .kpi-card {
+            background-color: #fff;
+            padding: 25px; /* Increased padding */
+            border-radius: 10px; /* More rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            text-align: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Hover effect */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        .kpi-card .icon {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .kpi-card .value {
+            font-size: 1.8em; /* Further reduced font size for better fit */
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            white-space: nowrap; /* Prevent wrapping for numbers */
+            overflow: hidden; /* Hide overflow if it still occurs (unlikely with smaller font) */
+            text-overflow: ellipsis; /* Add ellipsis if text is clipped */
+        }
+        .kpi-card .label {
+            font-size: 0.9em; /* Adjusted label font size */
+            color: #666;
+            line-height: 1.2; /* Ensure enough space for two lines if needed */
+        }
+
+        /* Sales Chart Section */
+        .sales-chart-container {
+            position: relative;
+            height: 350px; /* Adjusted height for the chart to prevent overlap */
+            background-color: #fff;
+            padding: 30px; /* Increased padding for more space around the chart */
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 60px; /* Increased margin-bottom to prevent overlap with low stock alerts */
+            display: flex; /* Use flexbox for internal layout */
+            flex-direction: column; /* Stack children vertically */
+        }
+        .sales-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px; /* Space between header and chart */
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px; /* Gap between elements in header */
+        }
+        .sales-chart-header h3 {
+            flex-grow: 1; /* Allow title to take available space */
+            text-align: center;
+            color: var(--primary-color);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.8em;
+            margin-bottom: 0; /* Reset margin for h3 within flex container */
+        }
+        .chart-filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .chart-filters select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            outline: none;
+            min-width: 100px; /* Ensure enough width for options */
+        }
+        .chart-filters select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        canvas {
+            max-width: 100%;
+            height: 100%;
+            flex-grow: 1; /* Allow canvas to take remaining vertical space */
+        }
+
+        .alert-card {
+            background-color: #ffcc00; /* Accent color for alerts */
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px; /* Slightly less margin */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for alerts */
+            animation: fadeIn 0.5s ease-out; /* Fade in animation */
+        }
+        .alert-card.error {
+            background-color: var(--error-color);
+            color: var(--text-light);
+        }
+        .alert-card.info {
+            background-color: var(--info-color); /* New info color */
+            color: var(--text-light);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Filter for Dashboard Data */
+        .dashboard-filters {
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            margin-bottom: 20px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .dashboard-filters label {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 0.95em;
+        }
+
+        .dashboard-filters select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            outline: none;
+            min-width: 120px; /* Ensure enough width for options */
+        }
+
+        .dashboard-filters select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+
+        footer {
+            background-color: var(--dark-bg); color: #f4f4f4;
+            padding: 40px 0 20px; margin-top: 40px; font-size: 0.9em;
+        }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; }
+        .footer-section { flex: 1; min-width: 250px; margin-bottom: 20px; padding-right: 20px; }
+        .footer-section:last-child { padding-right: 0; }
+        .footer-section h3 { color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section .logo-text { font-size: 1.8em; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            justify-content: center;
+        }
+
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none; /* Keeps textarea inline */
+            height: 40px; /* Match height for alignment */
+        }
+
+        .footer-section.contact-form textarea {
+            flex: 2; /* Slightly larger than email field */
+        }
+
+        .footer-section.contact-form .contact-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px; /* Align with fields */
+        }
+
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: #45a049;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+            }
+
+            .category-nav.active {
+                overflow: visible; /* Ensure content is visible when active */
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Footer responsiveness */
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-section {
+                padding-right: 0;
+                margin-bottom: 20px;
+            }
+            .footer-section .contact span {
+                justify-content: center;
+            }
+
+            /* Dashboard Section Responsiveness */
+            .kpi-cards {
+                grid-template-columns: 1fr; /* Stack KPIs on small screens */
+            }
+            /* Removed recent orders table responsiveness as the section is removed */
+            .sales-chart-container {
+                height: 300px; /* Adjust height for mobile */
+            }
+            .dashboard-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dashboard-filters select {
+                width: 100%; /* Full width on mobile */
+            }
+            .sales-chart-header {
+                flex-direction: column;
+                align-items: center;
+            }
+            .chart-filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            .chart-filters select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions">
+                    <div class="user-dropdown">
+                        <span class="user-icon" id="userInitialIcon">A</span>
+                        <span id="userNameDisplay" class="user-name">Welcome, Admin</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        <div class="dropdown-content">
+                            <span id="dropdownUserName"></span>
+                            <span id="dropdownUserEmail"></span>
+                            <a href="#" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <div class="container">
+                <a href="admin_dashboard.html" class="logo">Admin Panel</a>
+                <div class="search-bar" style="display:none;"></div>
+                <div class="nav-icons" style="display:none;"></div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="admin_dashboard.html">Dashboard</a></li>
+                    <li><a href="admin_orders.html">Manage Orders</a></li>
+                    <li><a href="admin_users.html">Manage Users</a></li>
+                    <li><a href="admin_products.html">Manage Products</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container admin-dashboard">
+        <h2>Welcome to the Admin Dashboard</h2>
+        <p>From here, you can manage various aspects of your Laptop Store.</p>
+
+        <!-- Overall Metrics Section -->
+        <div class="dashboard-section overall-metrics">
+            <h3>Overall Metrics</h3>
+            <div class="kpi-cards">
+                <div class="kpi-card">
+                    <i class="fas fa-users icon"></i>
+                    <div class="value" id="totalUsers">Loading...</div>
+                    <div class="label">Total Users (All Time)</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="fas fa-laptop icon"></i>
+                    <div class="value" id="totalProducts">Loading...</div>
+                    <div class="label">Total Products (All Time)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Filters -->
+        <div class="dashboard-filters">
+            <label for="time-period-filter">View Sales Data For:</label>
+            <select id="time-period-filter">
+                <option value="all_time">All Time</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="annually">Annually</option>
+            </select>
+        </div>
+
+        <div class="dashboard-section sales-overview">
+            <h3>Sales Overview</h3>
+            <div class="kpi-cards">
+                <div class="kpi-card">
+                    <i class="fas fa-rupee-sign icon"></i>
+                    <div class="value" id="totalRevenue">Loading...</div>
+                    <div class="label" id="totalRevenueLabel">Total Revenue (Monthly)</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="fas fa-shopping-bag icon"></i>
+                    <div class="value" id="totalOrders">Loading...</div>
+                    <div class="label" id="totalOrdersLabel">Total Orders (Monthly)</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="fas fa-chart-line icon"></i>
+                    <div class="value" id="avgOrderValue">Loading...</div>
+                    <div class="label" id="avgOrderValueLabel">Avg. Order Value (Monthly)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Chart Section -->
+        <div class="dashboard-section sales-chart-container">
+            <div class="sales-chart-header">
+                <h3>Sales Trend</h3>
+                <div class="chart-filters">
+                    <label for="chart-metric-filter" class="sr-only">Select Metric</label>
+                    <select id="chart-metric-filter">
+                        <option value="revenue">Revenue</option>
+                        <option value="orders">Orders</option>
+                        <option value="avg_order_value">Average Order Value</option>
+                        <!-- Removed "Users Registered" option -->
+                    </select>
+                    <label for="chart-type-filter" class="sr-only">Select Chart Type</label>
+                    <select id="chart-type-filter">
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <!-- Removed "Pie Chart" option -->
+                    </select>
+                </div>
+            </div>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <div class="dashboard-section low-stock-alerts">
+            <h3>Low Stock Alerts</h3>
+            <div id="lowStockAlertsContainer">
+                <div class="alert-card info"><i class="fas fa-info-circle"></i> <span>Loading low stock alerts...</span></div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore Admin</h3>
+                    <p>Admin control panel for managing your Laptop Store operations.</p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="admin_dashboard.html">Dashboard</a></li>
+                        <li><a href="admin_orders.html">Manage Orders</a></li>
+                        <li><a href="#">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Admin</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Admin Panel
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const API_BASE_URL = 'http://localhost:3000'; // Ensure this matches your backend URL
+
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userInitialIcon = document.getElementById('userInitialIcon');
+            const dropdownUserName = document.getElementById('dropdownUserName');
+            const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const categoryNav = document.getElementById('categoryNav');
+
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const totalOrdersEl = document.getElementById('totalOrders');
+            const avgOrderValueEl = document.getElementById('avgOrderValue');
+            const totalUsersEl = document.getElementById('totalUsers');
+            const totalProductsEl = document.getElementById('totalProducts');
+            const lowStockAlertsContainer = document.getElementById('lowStockAlertsContainer');
+            const salesChartCanvas = document.getElementById('salesChart');
+            let salesChartInstance = null; // To hold the Chart.js instance
+
+            // KPI Labels for dynamic updates
+            const totalRevenueLabelEl = document.getElementById('totalRevenueLabel');
+            const totalOrdersLabelEl = document.getElementById('totalOrdersLabel');
+            const avgOrderValueLabelEl = document.getElementById('avgOrderValueLabel');
+
+            // Time Period Filter Elements
+            const timePeriodFilterSelect = document.getElementById('time-period-filter');
+            let currentPeriod = timePeriodFilterSelect.value; // Default to 'monthly'
+
+            // NEW: Chart Specific Filters
+            const chartMetricFilterSelect = document.getElementById('chart-metric-filter');
+            const chartTypeFilterSelect = document.getElementById('chart-type-filter');
+            let currentChartMetric = chartMetricFilterSelect.value; // Default to 'revenue'
+            let currentChartType = chartTypeFilterSelect.value;     // Default to 'line'
+
+            // Check admin auth (redirect if not admin)
+            const adminToken = localStorage.getItem('adminToken');
+            const adminUser = JSON.parse(localStorage.getItem('adminUser'));
+            if (!adminToken || !adminUser || !adminUser.isAdmin) {
+                window.location.href = 'admin_login.html';
+            } else {
+                userNameDisplay.textContent = `Welcome, ${adminUser.name || 'Admin'}`;
+                userInitialIcon.textContent = (adminUser.name ? adminUser.name.charAt(0) : 'A').toUpperCase();
+                dropdownUserName.textContent = adminUser.name || 'Admin User';
+                dropdownUserEmail.textContent = adminUser.email || 'admin@example.com';
+            }
+
+            // Logout
+            adminLogoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = 'admin_login.html';
+            });
+
+            // Toggle menu for mobile
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function () {
+                    categoryNav.classList.toggle('active');
+                    if (categoryNav.classList.contains('active')) {
+                        categoryNav.style.maxHeight = categoryNav.scrollHeight + 'px';
+                        categoryNav.style.padding = '10px 0';
+                    } else {
+                        categoryNav.style.maxHeight = '0';
+                        categoryNav.style.padding = '0';
+                    }
+                });
+            }
+
+            // Responsive reset on resize
+            const mediaQuery = window.matchMedia('(max-width: 768px)');
+            function handleMediaQueryChange(e) {
+                if (!e.matches) { // If desktop view
+                    categoryNav.style.maxHeight = 'none';
+                    categoryNav.style.overflow = 'visible';
+                    categoryNav.style.padding = '10px 0';
+                    categoryNav.classList.remove('active');
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.display = 'flex';
+                        navLinks.style.flexDirection = 'row';
+                    }
+                } else { // If mobile view
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.flexDirection = 'column';
+                        if (!categoryNav.classList.contains('active')) {
+                            categoryNav.style.maxHeight = '0';
+                            categoryNav.style.overflow = 'hidden';
+                            categoryNav.style.padding = '0';
+                        }
+                    }
+                }
+            }
+            mediaQuery.addListener(handleMediaQueryChange);
+            handleMediaQueryChange(mediaQuery); // Initial check
+
+            // Helper function to get start/end dates for filtering
+            function getPeriodDates(period) {
+                const now = new Date();
+                let startDate = new Date();
+                let endDate = new Date();
+
+                endDate.setHours(23, 59, 59, 999); // End of current day
+
+                switch (period) {
+                    case 'daily':
+                        startDate.setHours(0, 0, 0, 0); // Start of current day
+                        break;
+                    case 'weekly':
+                        startDate.setDate(now.getDate() - now.getDay()); // Start of current week (Sunday)
+                        startDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'monthly':
+                        startDate.setDate(1); // Start of current month
+                        startDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'quarterly':
+                        const currentMonth = now.getMonth();
+                        const quarterStartMonth = Math.floor(currentMonth / 3) * 3;
+                        startDate = new Date(now.getFullYear(), quarterStartMonth, 1);
+                        startDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'annually':
+                        startDate = new Date(now.getFullYear(), 0, 1); // Start of current year
+                        startDate.setHours(0, 0, 0, 0);
+                        break;
+                    case 'all_time':
+                    default:
+                        startDate = new Date(0); // Epoch for all time
+                        endDate = new Date(); // Current date for all time
+                        break;
+                }
+                return { startDate, endDate };
+            }
+
+            // Function to fetch and load dashboard data from backend
+            async function loadDashboardData() {
+                // Set initial loading states for KPIs
+                totalRevenueEl.textContent = 'Loading...';
+                totalOrdersEl.textContent = 'Loading...';
+                avgOrderValueEl.textContent = 'Loading...';
+                totalUsersEl.textContent = 'Loading...';
+                totalProductsEl.textContent = 'Loading...';
+                lowStockAlertsContainer.innerHTML = '<div class="alert-card info"><i class="fas fa-info-circle"></i> <span>Loading low stock alerts...</span></div>';
+
+                let allOrders = [];
+                let allProducts = []; // To store all products for total count and low stock
+                let allUsers = [];
+
+                // --- Fetch All Orders Data ---
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/orders`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        }
+                    });
+
+                    if (response.status === 401) {
+                        console.error('Authentication failed. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!response.ok) {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.message || 'Failed to fetch orders');
+                    }
+                    const result = await response.json();
+                    allOrders = result.orders;
+                } catch (error) {
+                    console.error('Error fetching orders data:', error);
+                    totalRevenueEl.textContent = 'Error';
+                    totalOrdersEl.textContent = 'Error';
+                    avgOrderValueEl.textContent = 'Error';
+                    totalRevenueLabelEl.textContent = `Total Revenue (Error)`;
+                    totalOrdersLabelEl.textContent = `Total Orders (Error)`;
+                    avgOrderValueLabelEl.textContent = `Avg. Order Value (Error)`;
+                }
+
+                // --- Fetch All Users Data (for total users KPI) ---
+                try {
+                    totalUsersEl.textContent = 'Loading...';
+                    const usersResponse = await fetch(`${API_BASE_URL}/admin/users`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        }
+                    });
+
+                    if (usersResponse.status === 401) {
+                        console.error('Authentication failed. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!usersResponse.ok) {
+                        const errorResult = await usersResponse.json();
+                        throw new Error(errorResult.message || 'Failed to fetch users');
+                    }
+                    const usersResult = await usersResponse.json();
+                    // Ensure usersResult.users is an array, default to empty array if not
+                    allUsers = Array.isArray(usersResult.users) ? usersResult.users : [];
+                    totalUsersEl.textContent = allUsers.length.toLocaleString('en-IN'); // Overall total users
+                } catch (error) {
+                    console.error('Error fetching total users:', error);
+                    totalUsersEl.textContent = 'Error';
+                    allUsers = []; // Ensure allUsers is an empty array on error
+                }
+
+                // --- Fetch Total Products (Dynamic) ---
+                try {
+                    totalProductsEl.textContent = 'Loading...';
+                    const productsResponse = await fetch(`${API_BASE_URL}/admin/products`, { // Endpoint for all products
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken // Include admin token for authentication
+                        }
+                    });
+
+                    if (productsResponse.status === 401) {
+                        console.error('Authentication failed for products. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!productsResponse.ok) {
+                        const errorResult = await productsResponse.json();
+                        throw new Error(errorResult.message || 'Failed to fetch products');
+                    }
+                    const productsResult = await productsResponse.json();
+                    // Assuming productsResult contains a 'products' array
+                    allProducts = Array.isArray(productsResult.products) ? productsResult.products : [];
+                    totalProductsEl.textContent = allProducts.length.toLocaleString('en-IN'); // Format with commas
+                } catch (error) {
+                    console.error('Error fetching total products:', error);
+                    totalProductsEl.textContent = 'Error';
+                    allProducts = []; // Ensure allProducts is empty on error
+                }
+
+
+                // --- Filter data based on selected time period ---
+                const { startDate, endDate } = getPeriodDates(currentPeriod);
+                const filteredOrders = allOrders.filter(order => {
+                    const orderDate = new Date(order.orderDate);
+                    return orderDate >= startDate && orderDate <= endDate;
+                });
+
+                // Calculate KPIs for the filtered period
+                let periodTotalRevenue = 0;
+                let periodTotalOrders = 0;
+                let periodTotalOrderItems = 0; // To calculate average order value correctly
+
+                // Aggregate data for chart
+                const chartDataAggregation = {}; // Stores {date: {revenue: X, orders: Y, avgOrderValue: Z}}
+
+                filteredOrders.forEach(order => {
+                    periodTotalRevenue += order.grandTotal;
+                    periodTotalOrders++;
+                    // Safely access order.products.length
+                    periodTotalOrderItems += (order.products && Array.isArray(order.products) ? order.products.length : 0);
+
+                    const orderDate = new Date(order.orderDate);
+                    let key = getAggregationKey(orderDate, currentPeriod);
+
+                    if (!chartDataAggregation[key]) {
+                        chartDataAggregation[key] = { revenue: 0, orders: 0, totalOrderValueForAvg: 0, orderCountForAvg: 0 };
+                    }
+                    chartDataAggregation[key].revenue += order.grandTotal;
+                    chartDataAggregation[key].orders += 1;
+                    chartDataAggregation[key].totalOrderValueForAvg += order.grandTotal;
+                    chartDataAggregation[key].orderCountForAvg += 1;
+                });
+
+
+                const avgOrderValue = periodTotalOrders > 0 ? periodTotalRevenue / periodTotalOrders : 0;
+
+                // Update KPI values
+                totalRevenueEl.textContent = `₹${periodTotalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0, notation: 'compact', compactDisplay: 'short' })}`;
+                totalOrdersEl.textContent = periodTotalOrders.toLocaleString('en-IN');
+                avgOrderValueEl.textContent = `₹${avgOrderValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                // Update KPI labels
+                const periodLabel = currentPeriod.replace('_', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                totalRevenueLabelEl.textContent = `Total Revenue (${periodLabel})`;
+                totalOrdersLabelEl.textContent = `Total Orders (${periodLabel})`;
+                avgOrderValueLabelEl.textContent = `Avg. Order Value (${periodLabel})`;
+
+                // Render Sales Chart with selected metric and type
+                renderSalesChart(chartDataAggregation, currentPeriod, currentChartMetric, currentChartType);
+
+                // --- Fetch Low Stock Alerts Data (Dynamic) ---
+                try {
+                    lowStockAlertsContainer.innerHTML = '<div class="alert-card info"><i class="fas fa-info-circle"></i> <span>Loading low stock alerts...</span></div>';
+                    const lowStockResponse = await fetch(`${API_BASE_URL}/admin/products/low-stock`, {
+                        headers: { 'x-auth-token': adminToken }
+                    });
+
+                    if (lowStockResponse.status === 401) {
+                        console.error('Authentication failed for low stock. Redirecting to login.');
+                        window.location.href = 'admin_login.html';
+                        return;
+                    }
+
+                    if (!lowStockResponse.ok) {
+                        const errorResult = await lowStockResponse.json();
+                        throw new Error(errorResult.message || 'Failed to fetch low stock products');
+                    }
+                    const lowStockResult = await lowStockResponse.json();
+                    const lowStockProducts = lowStockResult.lowStockProducts || []; // Ensure it's an array
+
+                    lowStockAlertsContainer.innerHTML = ''; // Clear existing content
+
+                    if (lowStockProducts.length === 0) {
+                        lowStockAlertsContainer.insertAdjacentHTML('beforeend', '<div class="alert-card"><i class="fas fa-check-circle"></i> <span>All products are well stocked!</span></div>');
+                    } else {
+                        lowStockProducts.forEach(product => {
+                            // Determine alert type based on stock level for styling (e.g., critical vs. warning)
+                            const alertType = product.stock <= 5 ? 'error' : ''; // Example: <=5 is critical (red), 6-20 is warning (yellow)
+                            const alertHtml = `
+                                <div class="alert-card ${alertType}">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>${product.name} has only ${product.stock} units left!</span>
+                                </div>
+                            `;
+                            lowStockAlertsContainer.insertAdjacentHTML('beforeend', alertHtml);
+                        });
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching low stock alerts data:', error);
+                    lowStockAlertsContainer.innerHTML = '<div class="alert-card error"><i class="fas fa-exclamation-circle"></i> <span>Failed to load low stock alerts.</span></div>';
+                }
+            }
+
+            // Helper to get aggregation key for chart data
+            function getAggregationKey(date, period) {
+                switch (period) {
+                    case 'daily':
+                        return date.toISOString().split('T')[0]; // YYYY-MM-DD
+                    case 'weekly':
+                        const day = date.getDay();
+                        const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Get Monday
+                        const monday = new Date(date.setDate(diff));
+                        return `${monday.getFullYear()}-W${Math.ceil((monday.getTime() - new Date(monday.getFullYear(), 0, 1).getTime()) / (1000 * 60 * 60 * 24 * 7))}`;
+                    case 'monthly':
+                        return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                    case 'quarterly':
+                        const quarter = Math.floor(date.getMonth() / 3) + 1;
+                        return `${date.getFullYear()}-Q${quarter}`;
+                    case 'annually':
+                        return `${date.getFullYear()}`;
+                    case 'all_time':
+                    default:
+                        return 'All Time';
+                }
+            }
+
+            function renderSalesChart(aggregatedData, period, metric, chartType) {
+                if (salesChartInstance) {
+                    salesChartInstance.destroy(); // Destroy existing chart instance if any
+                }
+
+                const labels = Object.keys(aggregatedData).sort();
+                let chartData = [];
+                let chartLabel = '';
+                let yAxisText = '';
+                let tooltipCallback = null;
+                let yAxisTicksCallback = null;
+
+                switch (metric) {
+                    case 'revenue':
+                        chartData = labels.map(key => aggregatedData[key].revenue);
+                        chartLabel = 'Revenue (₹)';
+                        yAxisText = 'Revenue (₹)';
+                        tooltipCallback = function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null) label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(context.parsed.y);
+                            return label;
+                        };
+                        yAxisTicksCallback = function(value) {
+                            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', notation: 'compact', compactDisplay: 'short' }).format(value);
+                        };
+                        break;
+                    case 'orders':
+                        chartData = labels.map(key => aggregatedData[key].orders);
+                        chartLabel = 'Number of Orders';
+                        yAxisText = 'Orders';
+                        tooltipCallback = function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null) label += context.parsed.y.toLocaleString('en-IN');
+                            return label;
+                        };
+                        yAxisTicksCallback = function(value) { return value.toLocaleString('en-IN'); };
+                        break;
+                    case 'avg_order_value':
+                        chartData = labels.map(key => {
+                            const data = aggregatedData[key];
+                            return data.orderCountForAvg > 0 ? data.totalOrderValueForAvg / data.orderCountForAvg : 0;
+                        });
+                        chartLabel = 'Average Order Value (₹)';
+                        yAxisText = 'Avg. Order Value (₹)';
+                        tooltipCallback = function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) label += ': ';
+                            if (context.parsed.y !== null) label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(context.parsed.y);
+                            return label;
+                        };
+                        yAxisTicksCallback = function(value) {
+                            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', notation: 'compact', compactDisplay: 'short' }).format(value);
+                        };
+                        break;
+                }
+
+                // If the selected chart type is now invalid (e.g., if 'pie' was selected and removed), default to 'line'
+                if (chartType !== 'line' && chartType !== 'bar') {
+                    chartType = 'line';
+                    chartTypeFilterSelect.value = 'line'; // Update the dropdown to reflect the change
+                }
+
+                let datasets = [{
+                    label: chartLabel,
+                    data: chartData,
+                    borderColor: 'rgb(75, 192, 192)', // Consistent border color for line/bar
+                    backgroundColor: chartType === 'line' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(75, 192, 192, 0.5)', // Different background for line vs bar
+                    tension: chartType === 'line' ? 0.3 : 0,
+                    fill: chartType === 'line' ? true : false,
+                    borderWidth: 2,
+                    pointRadius: chartType === 'line' ? 5 : 0,
+                    pointBackgroundColor: chartType === 'line' ? 'rgb(75, 192, 192)' : 'transparent',
+                    pointBorderColor: chartType === 'line' ? '#fff' : 'transparent',
+                    pointHoverRadius: chartType === 'line' ? 7 : 0,
+                }];
+
+                let scalesConfig = { // Scales are always present for line/bar charts
+                    x: {
+                        title: {
+                            display: true,
+                            text: period.replace('_', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+                        },
+                        ticks: {
+                            callback: function(val) {
+                                const labelKey = this.getLabelForValue(val);
+                                switch (period) {
+                                    case 'daily':
+                                        const date = new Date(labelKey);
+                                        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                                    case 'weekly':
+                                        return labelKey; // e.g., "2023-W25"
+                                    case 'monthly':
+                                        const dateParts = labelKey.split('-');
+                                        const year = dateParts[0];
+                                        const monthNum = parseInt(dateParts[1]);
+                                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                                        return `${monthNames[monthNum - 1]} ${year}`;
+                                    case 'quarterly':
+                                        return labelKey; // e.g., "2023-Q1"
+                                    case 'annually':
+                                        return labelKey; // e.g., "2023"
+                                    case 'all_time':
+                                    default:
+                                        return labelKey; // "All Time"
+                                }
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: yAxisText
+                        },
+                        ticks: {
+                            callback: yAxisTicksCallback,
+                            stepSize: metric === 'revenue' ? 200000 : undefined // Only apply stepSize for revenue
+                        }
+                    }
+                };
+
+
+                salesChartInstance = new Chart(salesChartCanvas, {
+                    type: chartType,
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 20,
+                                right: 20,
+                                top: 20,
+                                bottom: 20
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: false,
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: tooltipCallback
+                                }
+                            },
+                            legend: {
+                                display: true, // Legend is always displayed for line/bar charts
+                                position: 'top',
+                            }
+                        },
+                        scales: scalesConfig
+                    }
+                });
+            }
+
+            // Event listener for the main time period filter
+            timePeriodFilterSelect.addEventListener('change', function() {
+                currentPeriod = this.value;
+                loadDashboardData();
+            });
+
+            // NEW: Event listeners for chart specific filters
+            chartMetricFilterSelect.addEventListener('change', function() {
+                currentChartMetric = this.value;
+                loadDashboardData(); // Re-fetch and re-render data based on new metric
+            });
+
+            chartTypeFilterSelect.addEventListener('change', function() {
+                currentChartType = this.value;
+                loadDashboardData(); // Re-fetch and re-render data based on new chart type
+            });
+
+            // Initial load of dashboard data
+            loadDashboardData();
+        });
+    </script>
+</body>
+</html>

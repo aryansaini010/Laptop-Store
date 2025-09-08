@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktops - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html"><i class="fas fa-heart"></i><span class="nav-icon-text">Wishlist <span id="wishlist-quantity"></span></span></a>
+                    <a href="add_to_cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-icon-text">Cart <span id="cart-quantity"></span></span></a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="laptops.html" class="dropbtn-category">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="laptops.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="laptops.html#business-laptops">Business Laptops</a>
+                            <a href="laptops.html#ultrabooks">Ultrabooks</a>
+                            <a href="laptops.html#2-in-1-laptops">2-in-1 Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category active">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="category-page-main">
+        <div class="container">
+            <h1 class="section-title">Powerful Desktops for Every Need</h1>
+            <p class="category-intro">Whether you're a gamer, a creative professional, or need a reliable machine for daily tasks, our desktop selection has you covered.</p>
+
+            <div class="category-grid-sections">
+                <a href="#gaming-desktops" class="category-item-card">
+                    <img src="https://images.unsplash.com/photo-1653106914766-64510a5d742e?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Gaming Desktops">
+                    <h3>Gaming Desktops</h3>
+                    <p>Unleash unparalleled gaming performance with high-end components.</p>
+                    <button class="view-products-btn">View Products</button>
+                </a>
+
+                <a href="#workstation-desktops" class="category-item-card">
+                    <img src="https://images.unsplash.com/photo-1653106914766-64510a5d742e?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Workstation Desktops">
+                    <h3>Workstation Desktops</h3>
+                    <p>Designed for professionals demanding extreme power for complex tasks.</p>
+                    <button class="view-products-btn">View Products</button>
+                </a>
+
+                <a href="#mini-pcs" class="category-item-card">
+                    <img src="https://images.unsplash.com/photo-1653106914766-64510a5d742e?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mini PCs">
+                    <h3>Mini PCs</h3>
+                    <p>Compact yet capable, perfect for space-saving solutions or media centers.</p>
+                    <button class="view-products-btn">View Products</button>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

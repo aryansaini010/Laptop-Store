@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from the provided design screenshots and shopping-cart-page structure */
+
+        /* Variables for consistent colors */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+            --timeline-inactive-color: #ccc;
+            --timeline-active-color: var(--primary-color);
+            --timeline-cancelled-color: var(--error-color);
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            max-width: 500px;
+        }
+
+        .main-nav .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        /* Nav Icons (Wishlist and Cart) - Adjusted to match shopping-cart-page */
+        .nav-icons {
+            display: flex;
+            gap: 25px; /* Space between icons */
+        }
+
+        .nav-icons a {
+            text-decoration: none;
+            color: var(--text-dark); /* Color of "Wishlist" / "Cart" text */
+            text-align: center;
+            font-size: 0.9em;
+            position: relative; /* For badge positioning */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .nav-icons a i {
+            font-size: 1.4em; /* Icon size */
+            margin-right: 0; /* Remove horizontal margin */
+            margin-bottom: 5px; /* Space between icon and text */
+            color: var(--secondary-color); /* Icon color */
+        }
+
+        .nav-icon-text {
+            /* This div now wraps only the text, the badge is positioned relative to the <a> */
+            display: block; /* Ensure it takes its own line */
+            position: static; /* Reset to default positioning */
+        }
+
+        /* Badge for quantity */
+        .nav-icon-text span {
+            background-color: var(--accent-color); /* Yellow background */
+            color: var(--text-dark); /* Black text */
+            border-radius: 50%;
+            padding: 1px 5px; /* Reduced padding */
+            font-size: 0.6em; /* Reduced font size */
+            position: absolute;
+            top: -5px; /* Adjust top to position above the icon */
+            right: -10px; /* Adjust right to position to the top-right of the icon */
+            min-width: 16px; /* Reduced min-width */
+            height: 16px; /* Added height to ensure circular shape */
+            display: flex; /* Use flex to center content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+
+        /* Category Navigation Bar - Base (for desktop) */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            /* Ensure it's always visible and takes up space on desktop */
+            display: block; /* Ensure it's not display:none */
+            max-height: none;
+            overflow: visible;
+            transition: none;
+            cursor: default;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Always flex row on desktop */
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Dropdown for categories */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: var(--card-shadow);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            left: 0; /* Align dropdown to the left of its parent */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: #000 !important; /* Force black color for dropdown options */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal; /* Override bold from parent link */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        .dropdown-category .dropbtn-category i {
+            margin-left: 8px; /* Space between text and arrow */
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-category:hover .dropbtn-category i {
+            transform: rotate(180deg);
+        }
+
+        /* Current page highlight (if applicable) */
+        .category-nav .nav-links li.active a {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 7px;
+        }
+
+        /* Main Content Area - General Layout */
+        .main-content {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .main-content h2 {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .main-content h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        /* Track Order Form Styling */
+        .track-order-form {
+            max-width: 500px;
+            margin: 0 auto 40px auto;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .track-order-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .track-order-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .track-order-form input[type="text"] {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .track-order-form input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .track-order-form .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+        }
+
+        .form-messages {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .form-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Order Details Display Section */
+        #orderDetailsDisplay {
+            display: none; /* Hidden by default */
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        #orderDetailsDisplay h3 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        #orderDetailsDisplay p {
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: var(--text-dark);
+        }
+
+        #orderDetailsDisplay p strong {
+            color: var(--secondary-color);
+        }
+
+        #orderDetailsDisplay h4 {
+            font-size: 1.4em;
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        #orderDetailsDisplay ul {
+            list-style: none;
+            padding: 0;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+
+        #orderDetailsDisplay ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        #orderDetailsDisplay ul li:last-child {
+            border-bottom: none;
+        }
+
+        #orderDetailsDisplay ul li span:first-child {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        /* Order Status Styling */
+        .order-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block; /* To make padding effective */
+            margin-left: 10px;
+            text-transform: capitalize;
+        }
+
+        .status-pending { background-color: #ffeb3b; color: #333; } /* Yellow */
+        .status-processing { background-color: #2196f3; color: white; } /* Blue */
+        .status-shipped { background-color: #ff9800; color: white; } /* Orange */
+        .status-delivered { background-color: var(--primary-color); color: white; } /* Green */
+        .status-cancelled { background-color: var(--error-color); color: white; } /* Red */
+
+        /* Order Progress Timeline Styling */
+        .order-progress-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .order-progress-section h3 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .order-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align items to the top */
+            margin-top: 30px;
+            position: relative;
+            padding-bottom: 20px; /* Space for text below line */
+        }
+
+        .order-timeline::before {
+            content: '';
+            position: absolute;
+            top: 15px; /* Adjust to center with circles */
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--timeline-inactive-color);
+            z-index: 1;
+        }
+
+        .timeline-step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2; /* Ensure steps are above the line */
+            padding: 0 5px; /* Small padding to prevent text overflow */
+        }
+
+        .timeline-circle {
+            width: 30px;
+            height: 30px;
+            background-color: var(--timeline-inactive-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: 3px solid #fff; /* White border to stand out */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .timeline-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #777;
+            font-weight: bold;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .timeline-step.active .timeline-circle {
+            background-color: var(--timeline-active-color);
+            border-color: var(--timeline-active-color);
+        }
+
+        .timeline-step.active .timeline-text {
+            color: var(--text-dark);
+        }
+
+        /* Special styling for cancelled status */
+        .timeline-step.cancelled .timeline-circle {
+            background-color: var(--timeline-cancelled-color);
+            border-color: var(--timeline-cancelled-color);
+        }
+
+        .timeline-step.cancelled .timeline-text {
+            color: var(--timeline-cancelled-color);
+        }
+
+        /* Adjust line for active steps */
+        .order-timeline.active-1::before { width: calc(25% - 15px); background-color: var(--timeline-active-color); }
+        .order-timeline.active-2::before { width: calc(50% - 15px); background-color: var(--timeline-active-color); }
+        .order-timeline.active-3::before { width: calc(75% - 15px); background-color: var(--timeline-active-color); }
+        .order-timeline.active-4::before { width: calc(100% - 15px); background-color: var(--timeline-active-color); }
+        /* For cancelled, we might not want the line to go fully active, or make it red */
+        .order-timeline.cancelled-status::before { background-color: var(--timeline-cancelled-color); }
+
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+       .footer-section.contact-form form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+    justify-content: center;
+}
+
+.footer-section.contact-form input[type="email"],
+.footer-section.contact-form textarea {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1em;
+    margin: 0;
+    resize: none; /* Keeps textarea inline */
+    height: 40px; /* Match height for alignment */
+}
+
+.footer-section.contact-form textarea {
+    flex: 2; /* Slightly larger than email field */
+}
+
+.footer-section.contact-form .contact-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    height: 40px; /* Align with fields */
+}
+
+.footer-section.contact-form .contact-btn:hover {
+    background-color: #45a049;
+}
+
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none; /* Hidden on desktop by default */
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            cursor: pointer;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+                transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            }
+
+            .category-nav.active {
+                max-height: 500px; /* Show menu when active */
+                padding: 10px 0; /* Add padding when active on mobile */
+                transition: max-height 0.5s ease-in, padding 0.5s ease-in;
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .dropdown-category .dropdown-content-category {
+                position: static; /* Allow dropdown to flow naturally in mobile menu */
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: rgba(249, 249, 249, 0.9);
+            }
+
+            .dropdown-category .dropdown-content-category a {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            /* Responsive adjustments for timeline */
+            .order-timeline {
+                flex-wrap: wrap;
+                justify-content: center; /* Center steps on smaller screens */
+            }
+
+            .order-timeline::before {
+                display: none; /* Hide horizontal line on very small screens */
+            }
+
+            .timeline-step {
+                width: 50%; /* Two columns on mobile */
+                margin-bottom: 20px; /* Space between rows */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .timeline-step {
+                width: 100%; /* One column on very small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span id="wishlist-quantity">0</span></span>
+                    </a>
+                    <a href="add_to_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span id="cart-quantity">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="laptops.html" class="dropbtn-category">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="laptops.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="laptops.html#business-laptops">Business Laptops</a>
+                            <a href="laptops.html#ultrabooks">Ultrabooks</a>
+                            <a href="laptops.html#2-in-1-laptops">2-in-1 Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <h2>Track Your Order</h2>
+
+        <form id="trackOrderForm" class="track-order-form">
+            <div class="form-group">
+                <label for="orderIdInput">Enter Order ID:</label>
+                <input type="text" id="orderIdInput" name="orderIdInput" placeholder="e.g., ORD-1721838481234-ABCDE" required>
+                <div class="error-message" id="orderId-error"></div>
+            </div>
+            <div class="form-messages" id="track-form-message"></div>
+            <button type="submit" class="btn btn-primary">Track Order</button>
+        </form>
+
+        <div id="orderDetailsDisplay">
+            <div class="order-progress-section">
+                <h3>Order Progress</h3>
+                <div class="order-timeline" id="orderTimeline">
+                    <div class="timeline-step" data-status="pending">
+                        <div class="timeline-circle"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="timeline-text">Order Placed</div>
+                    </div>
+                    <div class="timeline-step" data-status="processing">
+                        <div class="timeline-circle"><i class="fas fa-cogs"></i></div>
+                        <div class="timeline-text">Processing</div>
+                    </div>
+                    <div class="timeline-step" data-status="shipped">
+                        <div class="timeline-circle"><i class="fas fa-truck"></i></div>
+                        <div class="timeline-text">Shipped</div>
+                    </div>
+                    <div class="timeline-step" data-status="delivered">
+                        <div class="timeline-circle"><i class="fas fa-box-open"></i></div>
+                        <div class="timeline-text">Delivered</div>
+                    </div>
+                    <div class="timeline-step" data-status="cancelled">
+                        <div class="timeline-circle"><i class="fas fa-times-circle"></i></div>
+                        <div class="timeline-text">Cancelled</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Order Details</h3>
+            <p><strong>Order ID:</strong> <span id="display-order-id"></span></p>
+            <p><strong>Order Date:</strong> <span id="display-order-date"></span></p>
+            <p><strong>Order Status:</strong> <span id="display-order-status"></span></p>
+            <p><strong>Customer Name:</strong> <span id="display-customer-name"></span></p>
+            <p><strong>Customer Email:</strong> <span id="display-customer-email"></span></p>
+            <p><strong>Shipping Address:</strong> <span id="display-shipping-address"></span></p>
+            <p><strong>Payment Method:</strong> <span id="display-payment-method"></span></p>
+            <p><strong>Total Amount:</strong> <span id="display-total-amount"></span></p>
+
+            <h4>Items Ordered:</h4>
+            <ul id="display-order-items">
+                <!-- Order items will be loaded here by JavaScript -->
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE_URL = 'http://localhost:3000';
+
+            const trackOrderForm = document.getElementById('trackOrderForm');
+            const orderIdInput = document.getElementById('orderIdInput');
+            const orderIdError = document.getElementById('orderId-error');
+            const trackFormMessage = document.getElementById('track-form-message');
+            const orderDetailsDisplay = document.getElementById('orderDetailsDisplay');
+            const orderTimeline = document.getElementById('orderTimeline'); // New: Timeline container
+
+            const displayOrderId = document.getElementById('display-order-id');
+            const displayOrderDate = document.getElementById('display-order-date');
+            const displayOrderStatus = document.getElementById('display-order-status');
+            const displayCustomerName = document.getElementById('display-customer-name');
+            const displayCustomerEmail = document.getElementById('display-customer-email');
+            const displayShippingAddress = document.getElementById('display-shipping-address');
+            const displayPaymentMethod = document.getElementById('display-payment-method');
+            const displayTotalAmount = document.getElementById('display-total-amount');
+            const displayOrderItems = document.getElementById('display-order-items');
+
+            /**
+             * Displays a temporary message in a specific HTML element.
+             * @param {HTMLElement} element - The HTML element to display the message in.
+             * @param {string} message - The message text.
+             * @param {boolean} isError - True for error (red text), false for success (green text).
+             */
+            function displayMessage(element, message, isError = true) {
+                element.textContent = message;
+                element.classList.remove('success', 'error'); // Clear previous states
+                element.classList.add(isError ? 'error' : 'success');
+                element.style.display = message ? 'block' : 'none';
+            }
+
+            /**
+             * Clears a message from a specific HTML element.
+             * @param {HTMLElement} element - The HTML element.
+             */
+            function clearMessage(element) {
+                element.textContent = '';
+                element.classList.remove('success', 'error');
+                element.style.display = 'none';
+            }
+
+            trackOrderForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                clearMessage(orderIdError);
+                clearMessage(trackFormMessage);
+                orderDetailsDisplay.style.display = 'none'; // Hide previous results
+
+                const orderId = orderIdInput.value.trim();
+
+                if (orderId === '') {
+                    displayMessage(orderIdError, 'Order ID is required.', true);
+                    return;
+                }
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    displayMessage(trackFormMessage, 'You must be logged in to track orders.', true);
+                    // Optionally redirect to login page
+                    // setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': token
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const order = result.order;
+                        if (order) {
+                            displayMessage(trackFormMessage, 'Order found!', false);
+                            displayOrderDetails(order);
+                        } else {
+                            displayMessage(trackFormMessage, 'Order not found or you do not have permission to view it.', true);
+                        }
+                    } else {
+                        displayMessage(trackFormMessage, result.message || 'Failed to fetch order details.', true);
+                        console.error('Error fetching order:', result.error || result.message);
+                    }
+                } catch (error) {
+                    console.error('Network error tracking order:', error);
+                    displayMessage(trackFormMessage, 'Network error. Could not connect to server.', true);
+                }
+            });
+
+            function displayOrderDetails(order) {
+                displayOrderId.textContent = order.orderId;
+                const orderDate = new Date(order.orderDate);
+                displayOrderDate.textContent = orderDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                // Set status and apply appropriate class
+                displayOrderStatus.textContent = order.status;
+                displayOrderStatus.className = `order-status status-${order.status.toLowerCase()}`;
+
+                displayCustomerName.textContent = order.customerInfo.fullName;
+                displayCustomerEmail.textContent = order.customerInfo.email;
+                displayShippingAddress.textContent = `${order.shippingAddress.address}, ${order.shippingAddress.city}, ${order.shippingAddress.zipCode}`;
+                displayPaymentMethod.textContent = order.paymentMethod;
+                displayTotalAmount.textContent = `₹${order.grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                displayOrderItems.innerHTML = ''; // Clear existing items
+                order.items.forEach(item => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span>${item.productName} (x${item.quantity})</span>
+                        <span>₹${(item.productPrice * item.quantity).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    `;
+                    displayOrderItems.appendChild(listItem);
+                });
+
+                updateOrderTimeline(order.status); // Call new function to update timeline
+
+                orderDetailsDisplay.style.display = 'block'; // Show the details section
+            }
+
+            function updateOrderTimeline(currentStatus) {
+                const steps = orderTimeline.querySelectorAll('.timeline-step');
+                const statusOrder = ['pending', 'processing', 'shipped', 'delivered']; // Define linear progress order
+                const currentStatusLower = currentStatus.toLowerCase();
+
+                // Reset all steps and timeline line class
+                steps.forEach(step => {
+                    step.classList.remove('active', 'cancelled');
+                });
+                orderTimeline.classList.remove('active-1', 'active-2', 'active-3', 'active-4', 'cancelled-status');
+
+                let activeCount = 0;
+                let isCancelled = false;
+
+                if (currentStatusLower === 'cancelled') {
+                    isCancelled = true;
+                    // Find the cancelled step and apply cancelled class
+                    const cancelledStep = Array.from(steps).find(step => step.dataset.status === 'cancelled');
+                    if (cancelledStep) {
+                        cancelledStep.classList.add('active', 'cancelled'); // Mark as active and cancelled
+                    }
+                    orderTimeline.classList.add('cancelled-status'); // Apply cancelled line color
+                } else {
+                    for (let i = 0; i < statusOrder.length; i++) {
+                        const status = statusOrder[i];
+                        const stepElement = Array.from(steps).find(step => step.dataset.status === status);
+
+                        if (stepElement) {
+                            stepElement.classList.add('active');
+                            activeCount++;
+                            if (status === currentStatusLower) {
+                                break; // Stop activating steps after the current status
+                            }
+                        }
+                    }
+                    // Apply class to extend the timeline line
+                    if (activeCount > 0) {
+                        orderTimeline.classList.add(`active-${activeCount}`);
+                    }
+                }
+            }
+        });
+    </script>
+    <!-- Link to your main script.js file here to handle header UI updates -->
+    <script src="script.js"></script>
+</body>
+</html>

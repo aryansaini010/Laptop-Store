@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaptopStore - Your Tech Destination</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html"><i class="fas fa-heart"></i><span class="nav-icon-text">Wishlist <span id="wishlist-quantity"></span></span></a>
+                    <a href="add_to_cart.html"><i class="fas fa-shopping-cart"></i><span class="nav-icon-text">Cart <span id="cart-quantity"></span></span></a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+       
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="laptops.html" class="dropbtn-category">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="laptops.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="laptops.html#business-laptops">Business Laptops</a>
+                            <a href="laptops.html#ultrabooks">Ultrabooks</a>
+                            <a href="laptops.html#2-in-1-laptops">2-in-1 Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                    <li><a href="user_account.html">My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main>
+     
+        <section id="hero">
+            <div class="hero-slider">
+                <div class="slide active">
+                    <img src="https://img.freepik.com/free-photo/laptop-stone-surface-sea-background_1232-430.jpg?semt=ais_hybrid&w=740" alt="Hero Banner Laptop Store" onerror="this.onerror=null;this.src='https://placehold.co/1200x450/4CAF50/ffffff?text=Great+Deals+on+Laptops';">
+                </div>
+                <div class="slide">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3B94CstbZCJfzwG3qK-v6PBx6YF78s_IBCA&s" alt="Hero Banner Gaming" onerror="this.onerror=null;this.src='https://placehold.co/1200x450/8BC34A/ffffff?text=Unleash+Gaming+Power';">
+                </div>
+                <div class="slide">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Hero Banner Workstation" onerror="this.onerror=null;this.src='https://placehold.co/1200x450/FFC107/333333?text=Productivity+Unleashed';">
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+       
+        <section class="product-section">
+            <div class="container">
+                <h2 class="section-title">Featured Products</h2>
+                <div class="product-grid">
+                    <!-- Product Card 1 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Modern Slim Laptop" onerror="this.onerror=null;this.src='https://placehold.co/300x200/4CAF50/ffffff?text=Modern+Laptop';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-001"
+                                    data-product-name="Modern Slim Laptop"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-001"
+                                    data-product-name="Modern Slim Laptop"
+                                    data-product-price="89999"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="Intel i7, 16GB RAM, 512GB SSD">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Modern Slim Laptop</h3>
+                            <p class="product-price">₹89,999</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-001"
+                                data-product-name="Modern Slim Laptop"
+                                data-product-price="89999"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="Intel i7, 16GB RAM, 512GB SSD">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Gaming Beast" onerror="this.onerror=null;this.src='https://placehold.co/300x200/8BC34A/ffffff?text=Gaming+Laptop';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-002"
+                                    data-product-name="Gaming Beast"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-002"
+                                    data-product-name="Gaming Beast"
+                                    data-product-price="129999"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="Intel i9, 32GB RAM, RTX 4080">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Gaming Beast</h3>
+                            <p class="product-price">₹1,29,999</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-002"
+                                data-product-name="Gaming Beast"
+                                data-product-price="129999"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="Intel i9, 32GB RAM, RTX 4080">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Professional Workstation" onerror="this.onerror=null;this.src='https://placehold.co/300x200/FFC107/333333?text=Workstation';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-003"
+                                    data-product-name="Professional Workstation"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-003"
+                                    data-product-name="Professional Workstation"
+                                    data-product-price="99999"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="AMD Ryzen 9, 64GB RAM, 2TB SSD">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Professional Workstation</h3>
+                            <p class="product-price">₹99,999</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-003"
+                                data-product-name="Professional Workstation"
+                                data-product-price="99999"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="AMD Ryzen 9, 64GB RAM, 2TB SSD">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Compact & Lightweight" onerror="this.onerror=null;this.src='https://placehold.co/300x200/4CAF50/ffffff?text=Compact+Laptop';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-004"
+                                    data-product-name="Compact & Lightweight"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-004"
+                                    data-product-name="Compact & Lightweight"
+                                    data-product-price="79999"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="Intel i5, 8GB RAM, 256GB SSD">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Compact & Lightweight</h3>
+                            <p class="product-price">₹79,999</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-004"
+                                data-product-name="Compact & Lightweight"
+                                data-product-price="79999"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="Intel i5, 8GB RAM, 256GB SSD">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 5 -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="Ultra Thin Laptop" onerror="this.onerror=null;this.src='https://placehold.co/300x200/FFC107/333333?text=Ultra+Thin+Laptop';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-005"
+                                    data-product-name="Ultra Thin Laptop"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-005"
+                                    data-product-name="Ultra Thin Laptop"
+                                    data-product-price="105000"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="Intel i7, 16GB RAM, 1TB SSD">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Ultra Thin Laptop</h3>
+                            <p class="product-price">₹1,05,000</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-005"
+                                data-product-name="Ultra Thin Laptop"
+                                data-product-price="105000"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="Intel i7, 16GB RAM, 1TB SSD">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 6  -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s" alt="High-End Gaming Laptop" onerror="this.onerror=null;this.src='https://placehold.co/300x200/4CAF50/ffffff?text=High-End+Gaming';">
+                            <div class="product-action-buttons">
+                                <button class="action-btn wishlist-btn"
+                                    data-product-id="prod-006"
+                                    data-product-name="High-End Gaming Laptop"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button class="action-btn"><i class="fas fa-search"></i></button>
+                                <button class="action-btn add-to-cart-btn"
+                                    data-product-id="prod-006"
+                                    data-product-name="High-End Gaming Laptop"
+                                    data-product-price="180000"
+                                    data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                    data-product-specs="AMD Ryzen 9, 32GB RAM, RTX 4090">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">High-End Gaming Laptop</h3>
+                            <p class="product-price">₹1,80,000</p>
+                            <button class="add-to-cart-btn"
+                                data-product-id="prod-006"
+                                data-product-name="High-End Gaming Laptop"
+                                data-product-price="180000"
+                                data-product-image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCxRGPBFLbLrhozX3PLdnv0i3dMzzDB0rE8Q&s"
+                                data-product-specs="AMD Ryzen 9, 32GB RAM, RTX 4090">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Brands Section -->
+        <section class="brands-section">
+            <div class="container">
+                <h2 class="section-title">Brands We Deal In</h2>
+                <div class="brands-grid">
+                    <div class="brand-logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3ez-YerlygQJKH9jHi_i09OMM0vYNfn6n9g&s" alt="Toshiba Logo" style="filter: brightness(0) invert(0);"></div>
+                    <div class="brand-logo"><img src="https://substackcdn.com/image/fetch/$s_!G1lk!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.jpeg" alt="Apple Logo" style="filter: brightness(0) invert(0);"></div>
+                    <div class="brand-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/HP_logo_2012.svg/480px-HP_logo_2012.svg.png alt="HP Logo" style="filter: brightness(0) invert(0);"></div>
+                    <div class="brand-logo"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6KVSvlL7cUZJQtuNVaPNYJm7pAhthw0Hmtg&s" alt="Acer Logo" style="filter: brightness(0) invert(0);"></div>
+                    <div class="brand-logo"><img src="https://e7.pngegg.com/pngimages/983/664/png-clipart-laptop-hewlett-packard-asus-acer-aspire-mining-logo-angle-electronics.png" alt="Asus Logo" style="filter: brightness(0) invert(0);"></div>
+                   
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Order Details - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reusing styles from user_account.html for consistency */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #333;
+            --accent-color: #ffcc00;
+            --background-light: #f0f8f0;
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545;
+            --dark-bg: #222;
+            --info-color: #17a2b8;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header { box-shadow: var(--card-shadow); background-color: #fff; }
+        .top-bar {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .top-bar .contact-info span { margin-right: 20px; }
+        .top-bar .contact-info i { margin-right: 5px; color: var(--primary-color); }
+        .user-actions { display: flex; align-items: center; gap: 15px; }
+        .user-actions a { color: var(--text-light); text-decoration: none; transition: color 0.3s ease; }
+        .user-actions a:hover { color: var(--accent-color); }
+        .user-actions .user-dropdown { position: relative; cursor: pointer; }
+        .user-actions .user-icon {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 30px; height: 30px; border-radius: 50%;
+            background-color: var(--primary-color); color: white;
+            font-weight: bold; font-size: 0.9em; margin-right: 5px;
+        }
+        .user-actions .user-name { font-size: 0.9em; margin-right: 5px; color: var(--text-light); }
+        .user-actions .dropdown-arrow { font-size: 0.8em; color: var(--text-light); }
+        .user-dropdown .dropdown-content {
+            display: none; position: absolute; background-color: #f9f9f9; min-width: 180px;
+            box-shadow: var(--card-shadow); z-index: 10; top: 100%; right: 0;
+            border-radius: 5px; padding: 10px; margin-top: 5px;
+        }
+        .user-dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content span { display: block; margin: 5px 0; font-size: 0.9em; color: var(--text-dark); }
+        .dropdown-content a {
+            color: var(--error-color); text-decoration: none; display: block;
+            padding: 5px 0; margin-top: 10px; border-top: 1px solid #eee; text-align: center;
+            transition: color 0.3s ease;
+        }
+        .dropdown-content a:hover { color: #c82333; }
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .main-nav .container { display: flex; justify-content: space-between; align-items: center; }
+        .main-nav .logo { font-size: 1.8em; font-weight: bold; color: var(--primary-color); text-decoration: none; }
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .main-nav .search-bar input {
+            border: none;
+            padding: 10px;
+            flex-grow: 1;
+            font-size: 1em;
+            outline: none;
+        }
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+        .main-nav .nav-icons {
+            display: flex;
+            gap: 20px;
+        }
+        .main-nav .nav-icons a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+        }
+        .main-nav .nav-icons a:hover {
+            color: var(--primary-color);
+        }
+        .main-nav .nav-icons a i {
+            font-size: 1.4em;
+        }
+        .main-nav .nav-icons .nav-icon-text {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .main-nav .nav-icons .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--accent-color);
+            color: var(--text-dark);
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 18px;
+            height: 18px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .mobile-menu-button {
+            background: none; border: none; color: var(--primary-color); font-size: 1.8em; cursor: pointer; display: none;
+        }
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            display: block;
+            max-height: none;
+            overflow: visible;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .category-nav .nav-links li {
+            margin-right: 30px;
+        }
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            font-weight: bold;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+        /* Specific styles for the order details page */
+        .order-details-page {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+        .order-details-page h2 {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        .order-details-page h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+        .order-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .order-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 1.5em;
+        }
+        .order-info p, .customer-info p, .shipping-info p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .order-info span, .customer-info span, .shipping-info span {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .order-status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: capitalize;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .status-pending { background-color: #ffeb3b; color: #333; }
+        .status-processing { background-color: #2196f3; color: white; }
+        .status-shipped { background-color: #ff9800; color: white; }
+        .status-delivered { background-color: var(--primary-color); color: white; }
+        .status-cancelled { background-color: var(--error-color); color: white; }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .order-items-table th, .order-items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        .order-items-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.9em;
+        }
+        .order-items-table td {
+            font-size: 0.9em;
+        }
+        .order-items-table img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .order-total-summary {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .order-total-summary p {
+            margin: 5px 0;
+        }
+        .order-total-summary .grand-total {
+            font-size: 1.3em;
+            color: var(--primary-color);
+            border-top: 2px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); color: #f4f4f4;
+            padding: 40px 0 20px; margin-top: 40px; font-size: 0.9em;
+        }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 30px; }
+        .footer-section { flex: 1; min-width: 250px; margin-bottom: 20px; padding-right: 20px; }
+        .footer-section:last-child { padding-right: 0; }
+        .footer-section h3 { color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section .logo-text { font-size: 1.8em; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; }
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none;
+            height: 40px;
+        }
+        .footer-section.contact-form textarea {
+            flex: 2;
+        }
+        .footer-section.contact-form .contact-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px;
+        }
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: #45a049;
+        }
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-bar .contact-info, .main-nav .search-bar, .main-nav .nav-icons { display: none; }
+            .main-nav .container { flex-wrap: wrap; justify-content: space-between; }
+            .main-nav .logo { order: 1; margin-bottom: 0; }
+            .mobile-menu-button { display: block; order: 3; margin-left: 15px; }
+            .category-nav { max-height: 0; overflow: hidden; padding: 0; }
+            .category-nav.active { overflow: visible; }
+            .category-nav .nav-links { flex-direction: column; align-items: center; }
+            .category-nav .nav-links li { margin: 5px 0; width: 100%; text-align: center; }
+
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-section { padding-right: 0; margin-bottom: 20px; }
+            .footer-section .contact span { justify-content: center; }
+            .footer-section.contact-form input[type="email"],
+            .footer-section.contact-form textarea { width: 100%; margin-bottom: 10px; }
+            .footer-section.contact-form .contact-btn { width: 100%; }
+
+            .order-items-table { display: block; overflow-x: auto; white-space: nowrap; }
+            .order-items-table thead { display: none; }
+            .order-items-table tr { display: block; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; }
+            .order-items-table td {
+                display: block; text-align: right; padding-left: 50%; position: relative;
+                border-bottom: 1px solid #eee;
+            }
+            .order-items-table td:last-child { border-bottom: none; }
+            .order-items-table td::before {
+                content: attr(data-label); position: absolute; left: 10px; width: 45%;
+                font-weight: bold; text-align: left;
+            }
+            .order-items-table img { display: block; margin: 0 auto 10px; } /* Center image on mobile */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="user-dropdown">
+                        <span class="user-icon" id="userInitialIcon">U</span>
+                        <span id="userNameDisplay" class="user-name">Welcome, User</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        <div class="dropdown-content">
+                            <span id="dropdownUserName"></span>
+                            <span id="dropdownUserEmail"></span>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">Laptop Store</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span class="badge" id="wishlistQuantity">0</span></span>
+                    </a>
+                    <a href="shopping_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span class="badge" id="cartQuantity">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="user_account.html">My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container order-details-page">
+        <h2 id="orderDetailsTitle">Order Details</h2>
+
+        <div class="message error" id="errorMessage" style="display:none;"></div>
+
+        <!-- Order Summary Section -->
+        <div class="order-section order-info">
+            <h3>Order Summary</h3>
+            <p>Order ID: <span id="displayOrderId">Loading...</span></p>
+            <p>Order Date: <span id="displayOrderDate">Loading...</span></p>
+            <p>Status: <span id="displayOrderStatus">Loading...</span></p>
+            <p>Payment Method: <span id="displayPaymentMethod">Loading...</span></p>
+        </div>
+
+        <!-- Customer Information Section -->
+        <div class="order-section customer-info">
+            <h3>Customer Information</h3>
+            <p>Name: <span id="displayCustomerName">Loading...</span></p>
+            <p>Email: <span id="displayCustomerEmail">Loading...</span></p>
+        </div>
+
+        <!-- Shipping Address Section -->
+        <div class="order-section shipping-info">
+            <h3>Shipping Address</h3>
+            <p><span id="displayShippingFullName">Loading...</span></p>
+            <p><span id="displayShippingAddress1">Loading...</span></p>
+            <p><span id="displayShippingAddress2"></span></p>
+            <p><span id="displayShippingCityStateZip">Loading...</span></p>
+            <p>Phone: <span id="displayShippingPhone">Loading...</span></p>
+        </div>
+
+        <!-- Order Items Section -->
+        <div class="order-section order-items">
+            <h3>Items Ordered</h3>
+            <table class="order-items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItemsTableBody">
+                    <tr><td colspan="4" style="text-align: center;">Loading items...</td></tr>
+                </tbody>
+            </table>
+            <div class="order-total-summary">
+                <p>Items Subtotal: ₹<span id="displayItemsSubtotal">0.00</span></p>
+                <p>Shipping: ₹<span id="displayShippingCost">0.00</span></p>
+                <p class="grand-total">Grand Total: ₹<span id="displayGrandTotal">0.00</span></p>
+                <p>Razorpay Payment ID: <span id="displayRazorpayPaymentId">N/A</span></p>
+                <p>Razorpay Order ID: <span id="displayRazorpayOrderId">N/A</span></p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>Your one-stop shop for the latest and greatest laptops.</p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>About Us</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | All Rights Reserved
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE_URL = 'http://localhost:3000';
+
+            // --- Common Header & Footer UI Logic (Copied from script.js for consistency) ---
+            const userActions = document.getElementById('userActions');
+            const userDropdown = userActions ? userActions.querySelector('.user-dropdown') : null;
+            const dropdownContent = userDropdown ? userDropdown.querySelector('.dropdown-content') : null;
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const dropdownUserName = document.getElementById('dropdownUserName');
+            const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userInitialIcon = document.getElementById('userInitialIcon');
+            const cartQuantityElement = document.getElementById('cartQuantity');
+            const wishlistQuantityElement = document.getElementById('wishlistQuantity');
+
+            function updateAuthUI() {
+                const storedUser = JSON.parse(localStorage.getItem('user'));
+                const token = localStorage.getItem('token');
+
+                if (storedUser && storedUser.name && storedUser.email && token) {
+                    if (userNameDisplay) userNameDisplay.textContent = `Welcome, ${storedUser.name.split(' ')[0]}`;
+                    if (dropdownUserName) dropdownUserName.textContent = `Name: ${storedUser.name}`;
+                    if (dropdownUserEmail) dropdownUserEmail.textContent = `Email: ${storedUser.email}`;
+                    if (userInitialIcon) userInitialIcon.textContent = storedUser.name.charAt(0).toUpperCase();
+                    if (userDropdown) userDropdown.style.display = 'flex';
+                } else {
+                    if (userNameDisplay) userNameDisplay.textContent = 'Welcome, User';
+                    if (userInitialIcon) userInitialIcon.textContent = 'U';
+                    if (userDropdown) userDropdown.style.display = 'none';
+                    window.location.href = 'login.html'; // Redirect to login if not logged in
+                }
+            }
+
+            if (userDropdown) {
+                userDropdown.addEventListener('click', function(event) {
+                    if (dropdownContent) {
+                        dropdownContent.classList.toggle('show');
+                        const arrow = userDropdown.querySelector('.dropdown-arrow');
+                        if (dropdownContent.classList.contains('show')) {
+                            arrow.style.transform = 'rotate(180deg)';
+                        } else {
+                            arrow.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                    event.stopPropagation();
+                });
+            }
+
+            document.addEventListener('click', function(event) {
+                if (dropdownContent && userDropdown && !userDropdown.contains(event.target)) {
+                    dropdownContent.classList.remove('show');
+                    const arrow = userDropdown.querySelector('.dropdown-arrow');
+                    if (arrow) {
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                }
+            });
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('adminToken');
+                    updateAuthUI();
+                    updateCartIconQuantity();
+                    updateWishlistIconQuantity();
+                    window.location.href = 'index.html';
+                });
+            }
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const categoryNav = document.getElementById('categoryNav');
+            if (mobileMenuButton && categoryNav) {
+                mobileMenuButton.addEventListener('click', function() {
+                    categoryNav.classList.toggle('active');
+                    if (categoryNav.classList.contains('active')) {
+                        categoryNav.style.maxHeight = categoryNav.scrollHeight + 'px';
+                        categoryNav.style.padding = '10px 0';
+                    } else {
+                        categoryNav.style.maxHeight = '0';
+                        categoryNav.style.padding = '0';
+                    }
+                });
+            }
+
+            const mediaQuery = window.matchMedia('(max-width: 768px)');
+            function handleMediaQueryChange(e) {
+                if (!e.matches) {
+                    categoryNav.style.maxHeight = 'none';
+                    categoryNav.style.overflow = 'visible';
+                    categoryNav.style.padding = '10px 0';
+                    categoryNav.classList.remove('active');
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.display = 'flex';
+                        navLinks.style.flexDirection = 'row';
+                    }
+                } else {
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.flexDirection = 'column';
+                        if (!categoryNav.classList.contains('active')) {
+                            categoryNav.style.maxHeight = '0';
+                            categoryNav.style.padding = '0';
+                        }
+                    }
+                }
+            }
+            mediaQuery.addListener(handleMediaQueryChange);
+            handleMediaQueryChange(mediaQuery);
+
+            function highlightActiveNavLink() {
+                const currentPath = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll('.category-nav .nav-links a');
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    const linkHref = link.getAttribute('href').split('/').pop();
+
+                    if (linkHref === currentPath || (currentPath === '' && linkHref === 'index.html')) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            async function updateCartIconQuantity() {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    if (cartQuantityElement) {
+                        cartQuantityElement.textContent = '0';
+                        cartQuantityElement.style.display = 'none';
+                    }
+                    return;
+                }
+                try {
+                    const response = await fetch(`${API_BASE_URL}/cart`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json', 'x-auth-token': token }
+                    });
+                    if (response.ok) {
+                        const cartItems = await response.json();
+                        const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                        if (cartQuantityElement) {
+                            if (totalQuantity > 0) {
+                                cartQuantityElement.textContent = totalQuantity;
+                                cartQuantityElement.style.display = 'flex';
+                            } else {
+                                cartQuantityElement.style.display = 'none';
+                            }
+                        }
+                    } else {
+                        console.error('Failed to fetch cart for icon quantity:', await response.json());
+                        if (cartQuantityElement) { cartQuantityElement.textContent = '0'; cartQuantityElement.style.display = 'none'; }
+                    }
+                } catch (error) {
+                    console.error('Network error fetching cart for icon quantity:', error);
+                    if (cartQuantityElement) { cartQuantityElement.textContent = '0'; cartQuantityElement.style.display = 'none'; }
+                }
+            }
+
+            async function updateWishlistIconQuantity() {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    if (wishlistQuantityElement) {
+                        wishlistQuantityElement.textContent = '0';
+                        wishlistQuantityElement.style.display = 'none';
+                    }
+                    return;
+                }
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/wishlist`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json', 'x-auth-token': token }
+                    });
+                    if (response.ok) {
+                        const wishlistItems = await response.json();
+                        const totalQuantity = wishlistItems.length;
+                        if (wishlistQuantityElement) {
+                            if (totalQuantity > 0) {
+                                wishlistQuantityElement.textContent = totalQuantity;
+                                wishlistQuantityElement.style.display = 'flex';
+                            } else {
+                                wishlistQuantityElement.style.display = 'none';
+                            }
+                        }
+                    } else {
+                        console.error('Failed to fetch wishlist for icon quantity:', await response.json());
+                        if (wishlistQuantityElement) { wishlistQuantityElement.textContent = '0'; wishlistQuantityElement.style.display = 'none'; }
+                    }
+                } catch (error) {
+                    console.error('Network error fetching wishlist for icon quantity:', error);
+                    if (wishlistQuantityElement) { wishlistQuantityQuantity.textContent = '0'; wishlistQuantityElement.style.display = 'none'; }
+                }
+            }
+
+            // Initial calls for global UI elements
+            updateAuthUI();
+            updateCartIconQuantity();
+            updateWishlistIconQuantity();
+            highlightActiveNavLink();
+
+            // --- Order Details Page Specific Logic ---
+            const displayOrderId = document.getElementById('displayOrderId');
+            const displayOrderDate = document.getElementById('displayOrderDate');
+            const displayOrderStatus = document.getElementById('displayOrderStatus');
+            const displayPaymentMethod = document.getElementById('displayPaymentMethod');
+            const displayCustomerName = document.getElementById('displayCustomerName');
+            const displayCustomerEmail = document.getElementById('displayCustomerEmail');
+            const displayShippingFullName = document.getElementById('displayShippingFullName');
+            const displayShippingAddress1 = document.getElementById('displayShippingAddress1');
+            const displayShippingAddress2 = document.getElementById('displayShippingAddress2');
+            const displayShippingCityStateZip = document.getElementById('displayShippingCityStateZip');
+            const displayShippingPhone = document.getElementById('displayShippingPhone');
+            const orderItemsTableBody = document.getElementById('orderItemsTableBody');
+            const displayItemsSubtotal = document.getElementById('displayItemsSubtotal');
+            const displayShippingCost = document.getElementById('displayShippingCost');
+            const displayGrandTotal = document.getElementById('displayGrandTotal');
+            const displayRazorpayPaymentId = document.getElementById('displayRazorpayPaymentId');
+            const displayRazorpayOrderId = document.getElementById('displayRazorpayOrderId');
+            const errorMessageEl = document.getElementById('errorMessage');
+
+            function showErrorMessage(message) {
+                errorMessageEl.textContent = message;
+                errorMessageEl.style.display = 'block';
+            }
+
+            async function fetchOrderDetails() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderId = urlParams.get('orderId');
+                const token = localStorage.getItem('token');
+
+                if (!orderId) {
+                    showErrorMessage('No Order ID provided in the URL.');
+                    return;
+                }
+                if (!token) {
+                    showErrorMessage('You must be logged in to view order details. Redirecting to login...');
+                    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                        method: 'GET',
+                        headers: { 'x-auth-token': token }
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        const order = result.order; // Backend sends { order: {...} }
+
+                        if (!order) {
+                            showErrorMessage('Order not found or you do not have permission to view it.');
+                            return;
+                        }
+
+                        // Populate Order Summary
+                        displayOrderId.textContent = order.orderId;
+                        displayOrderDate.textContent = new Date(order.orderDate).toLocaleDateString('en-IN', {
+                            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+                        displayOrderStatus.textContent = order.status;
+                        displayOrderStatus.className = `order-status-badge status-${order.status.toLowerCase()}`;
+                        displayPaymentMethod.textContent = order.paymentMethod.replace(/-/g, ' '); // Format "cash-on-delivery" to "cash on delivery"
+
+                        // Populate Customer Information
+                        displayCustomerName.textContent = order.customerInfo.fullName;
+                        displayCustomerEmail.textContent = order.customerInfo.email;
+
+                        // Populate Shipping Address
+                        displayShippingFullName.textContent = order.shippingAddress.fullName || order.customerInfo.fullName; // Use full name from shipping or customer
+                        displayShippingAddress1.textContent = order.shippingAddress.addressLine1;
+                        if (order.shippingAddress.addressLine2) {
+                            displayShippingAddress2.textContent = order.shippingAddress.addressLine2;
+                        } else {
+                            displayShippingAddress2.style.display = 'none'; // Hide if empty
+                        }
+                        displayShippingCityStateZip.textContent = `${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.zipCode}`;
+                        displayShippingPhone.textContent = order.shippingAddress.phoneNumber;
+
+                        // Populate Items Ordered
+                        orderItemsTableBody.innerHTML = ''; // Clear loading message
+                        order.items.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td data-label="Product">
+                                    <img src="${item.productImage}" onerror="this.onerror=null;this.src='https://placehold.co/60x60/cccccc/000000?text=No+Image';" alt="${item.productName}">
+                                    ${item.productName}
+                                </td>
+                                <td data-label="Quantity">${item.quantity}</td>
+                                <td data-label="Price">₹${item.productPrice.toLocaleString('en-IN')}</td>
+                                <td data-label="Subtotal">₹${(item.quantity * item.productPrice).toLocaleString('en-IN')}</td>
+                            `;
+                            orderItemsTableBody.appendChild(row);
+                        });
+
+                        // Populate Order Totals
+                        displayItemsSubtotal.textContent = order.subtotal.toLocaleString('en-IN');
+                        displayShippingCost.textContent = order.shipping.toLocaleString('en-IN');
+                        displayGrandTotal.textContent = order.grandTotal.toLocaleString('en-IN');
+                        displayRazorpayPaymentId.textContent = order.razorpayPaymentId || 'N/A';
+                        displayRazorpayOrderId.textContent = order.razorpayOrderId || 'N/A';
+
+                    } else {
+                        const errorData = await response.json();
+                        showErrorMessage(errorData.message || 'Failed to load order details.');
+                        console.error('Error fetching order details:', errorData);
+                    }
+                } catch (error) {
+                    console.error('Network error fetching order details:', error);
+                    showErrorMessage('Network error. Could not load order details.');
+                }
+            }
+
+            fetchOrderDetails(); // Call this function when the page loads
+        });
+    </script>
+</body>
+</html>

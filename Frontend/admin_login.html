@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from the provided design screenshots (e.g., shopping-cart-page, order_details) */
+
+        /* Variables for consistent colors */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            max-width: 500px;
+        }
+
+        .main-nav .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        /* Nav Icons (Wishlist and Cart) - Adjusted to match shopping-cart-page */
+        .nav-icons {
+            display: flex;
+            gap: 25px; /* Space between icons */
+        }
+
+        .nav-icons a {
+            text-decoration: none;
+            color: var(--text-dark); /* Color of "Wishlist" / "Cart" text */
+            text-align: center;
+            font-size: 0.9em;
+            position: relative; /* For badge positioning */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .nav-icons a i {
+            font-size: 1.4em; /* Icon size */
+            margin-right: 0; /* Remove horizontal margin */
+            margin-bottom: 5px; /* Space between icon and text */
+            color: var(--secondary-color); /* Icon color */
+        }
+
+        .nav-icon-text {
+            /* This div now wraps only the text, the badge is positioned relative to the <a> */
+            display: block; /* Ensure it takes its own line */
+            position: static; /* Reset to default positioning */
+        }
+
+        /* Badge for quantity */
+        .nav-icon-text span {
+            background-color: var(--accent-color); /* Yellow background */
+            color: var(--text-dark); /* Black text */
+            border-radius: 50%;
+            padding: 1px 5px; /* Reduced padding */
+            font-size: 0.6em; /* Reduced font size */
+            position: absolute;
+            top: -5px; /* Adjust top to position above the icon */
+            right: -10px; /* Adjust right to position to the top-right of the icon */
+            min-width: 16px; /* Reduced min-width */
+            height: 16px; /* Added height to ensure circular shape */
+            display: flex; /* Use flex to center content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+
+        /* Category Navigation Bar - Base (for desktop) */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            /* Ensure it's always visible and takes up space on desktop */
+            display: block; /* Ensure it's not display:none */
+            max-height: none;
+            overflow: visible;
+            transition: none;
+            cursor: default;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Always flex row on desktop */
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Dropdown for categories */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: var(--card-shadow);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            left: 0; /* Align dropdown to the left of its parent */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: #000 !important; /* Force black color for dropdown options */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal; /* Override bold from parent link */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        .dropdown-category .dropbtn-category i {
+            margin-left: 8px; /* Space between text and arrow */
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-category:hover .dropbtn-category i {
+            transform: rotate(180deg);
+        }
+
+        /* Current page highlight (if applicable) */
+        .category-nav .nav-links li.active a {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 7px;
+        }
+
+        /* Main Content Area - General Layout for Login/Signup/Admin */
+        .auth-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 180px); /* Adjust based on header/footer height */
+            padding: 40px 20px;
+            background-color: var(--background-light);
+        }
+
+        .auth-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            font-size: 2.2em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .auth-container h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .auth-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .auth-form input[type="email"],
+        .auth-form input[type="password"] {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        .auth-form input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .auth-form .error-message {
+            color: var(--error-color);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        .auth-form .form-messages {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .auth-form .form-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .auth-form .form-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .auth-form .btn-primary {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+
+        .auth-container p {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .auth-container p a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-container p a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        /* Footer Contact Form Improvements (copied from shopping-cart-page for consistency) */
+        .footer-section .contact-form input[type="email"],
+        .footer-section .contact-form textarea {
+            width: 100%; /* Take full width */
+            padding: 10px;
+            margin-bottom: 10px; /* Space between inputs */
+            border: 1px solid #777;
+            background-color: #3e3e3e;
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+            box-sizing: border-box;
+            display: block; /* Ensure they stack */
+        }
+
+        .footer-section .contact-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Placeholder color for footer form */
+        .footer-section .contact-form input::placeholder,
+        .footer-section .contact-form textarea::placeholder {
+            color: #ccc;
+            opacity: 1;
+        }
+
+        .footer-section .contact-form .contact-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1em;
+            display: block; /* Make button a block element */
+            margin: 0 auto; /* Center the button */
+            margin-top: 10px; /* Add some space above the button */
+        }
+
+        .footer-section .contact-form .contact-btn:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none; /* Hidden on desktop by default */
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            cursor: pointer;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+                transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            }
+
+            .category-nav.active {
+                max-height: 500px; /* Show menu when active */
+                padding: 10px 0; /* Add padding when active on mobile */
+                transition: max-height 0.5s ease-in, padding 0.5s ease-in;
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .dropdown-category .dropdown-content-category {
+                position: static; /* Allow dropdown to flow naturally in mobile menu */
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: rgba(249, 249, 249, 0.9);
+            }
+
+            .dropdown-category .dropdown-content-category a {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+            </div>
+        </div>    
+    </header>
+
+    <main class="auth-page">
+        <div class="auth-container">
+            <h2>Admin Login</h2>
+            <form id="adminLoginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                <div class="form-messages" id="admin-login-message"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE_URL = 'http://localhost:3000';
+
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const emailError = document.getElementById('email-error');
+            const passwordError = document.getElementById('password-error');
+            const adminLoginMessage = document.getElementById('admin-login-message');
+
+            /**
+             * Displays a temporary message in a specific HTML element.
+             * @param {HTMLElement} element - The HTML element to display the message in.
+             * @param {string} message - The message text.
+             * @param {boolean} isError - True for error (red text), false for success (green text).
+             */
+            function displayMessage(element, message, isError = true) {
+                element.textContent = message;
+                element.classList.remove('success', 'error'); // Clear previous states
+                element.classList.add(isError ? 'error' : 'success');
+                element.style.display = message ? 'block' : 'none';
+            }
+
+            /**
+             * Clears a message from a specific HTML element.
+             * @param {HTMLElement} element - The HTML element.
+             */
+            function clearMessage(element) {
+                element.textContent = '';
+                element.classList.remove('success', 'error');
+                element.style.display = 'none';
+            }
+
+            adminLoginForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                clearMessage(emailError);
+                clearMessage(passwordError);
+                clearMessage(adminLoginMessage);
+
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                let isValid = true;
+
+                if (email === '') {
+                    displayMessage(emailError, 'Email is required.', true);
+                    isValid = false;
+                }
+                if (password === '') {
+                    displayMessage(passwordError, 'Password is required.', true);
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    displayMessage(adminLoginMessage, 'Please fill in all required fields.', true);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        localStorage.setItem('adminToken', result.token); // Store admin token
+                        localStorage.setItem('adminUser', JSON.stringify(result.user)); // Store admin user info
+                        displayMessage(adminLoginMessage, result.message || 'Admin login successful! Redirecting...', false);
+
+                        // Redirect to admin dashboard
+                        setTimeout(() => {
+                            window.location.href = 'admin_dashboard.html';
+                        }, 1500);
+                    } else {
+                        displayMessage(adminLoginMessage, result.message || 'Admin login failed. Invalid credentials or not an administrator.', true);
+                        console.error('Admin login error:', result.error || result.message);
+                    }
+                } catch (error) {
+                    console.error('Network error during admin login:', error);
+                    displayMessage(adminLoginMessage, 'Network error. Could not connect to server.', true);
+                }
+            });
+        });
+    </script>
+    <!-- Link to your main script.js file here to handle header UI updates -->
+    <script src="script.js"></script>
+</body>
+</html>

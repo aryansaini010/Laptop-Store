@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from the provided design screenshots and shopping-cart-page structure */
+
+        /* Variables for consistent colors */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter for a modern look */
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            max-width: 500px;
+        }
+
+        .main-nav .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        /* Nav Icons (Wishlist and Cart) - Adjusted to match shopping-cart-page */
+        .nav-icons {
+            display: flex;
+            gap: 25px; /* Space between icons */
+        }
+
+        .nav-icons a {
+            text-decoration: none;
+            color: var(--text-dark); /* Color of "Wishlist" / "Cart" text */
+            text-align: center;
+            font-size: 0.9em;
+            position: relative; /* For badge positioning */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .nav-icons a i {
+            font-size: 1.4em; /* Icon size */
+            margin-right: 0; /* Remove horizontal margin */
+            margin-bottom: 5px; /* Space between icon and text */
+            color: var(--secondary-color); /* Icon color */
+        }
+
+        .nav-icon-text {
+            /* This div now wraps only the text, the badge is positioned relative to the <a> */
+            display: block; /* Ensure it takes its own line */
+            position: static; /* Reset to default positioning */
+        }
+
+        /* Badge for quantity */
+        .nav-icon-text span {
+            background-color: var(--accent-color); /* Yellow background */
+            color: var(--text-dark); /* Black text */
+            border-radius: 50%;
+            padding: 1px 5px; /* Reduced padding */
+            font-size: 0.6em; /* Reduced font size */
+            position: absolute;
+            top: -5px; /* Adjust top to position above the icon */
+            right: -10px; /* Adjust right to position to the top-right of the icon */
+            min-width: 16px; /* Reduced min-width */
+            height: 16px; /* Added height to ensure circular shape */
+            display: flex; /* Use flex to center content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+
+        /* Category Navigation Bar - Base (for desktop) */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            /* Ensure it's always visible and takes up space on desktop */
+            display: block; /* Ensure it's not display:none */
+            max-height: none;
+            overflow: visible;
+            transition: none;
+            cursor: default;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Always flex row on desktop */
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Dropdown for categories */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: var(--card-shadow);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            left: 0; /* Align dropdown to the left of its parent */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: #000 !important; /* Force black color for dropdown options */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal; /* Override bold from parent link */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        .dropdown-category .dropbtn-category i {
+            margin-left: 8px; /* Space between text and arrow */
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-category:hover .dropbtn-category i {
+            transform: rotate(180deg);
+        }
+
+        /* Current page highlight (if applicable) */
+        .category-nav .nav-links li.active a {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 7px;
+        }
+
+        /* Main Content Area - Checkout Specific Styling */
+        .checkout-page {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff; /* White background like cart-container */
+            border-radius: 8px;
+            box-shadow: var(--card-shadow); /* Consistent shadow */
+        }
+
+        .checkout-page h2 {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .checkout-page h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        .checkout-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 20px; /* Space between steps */
+        }
+
+        .checkout-steps .step {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #e0e0e0;
+            color: #777;
+            font-weight: bold;
+            font-size: 0.9em;
+            position: relative;
+        }
+
+        .checkout-steps .step.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .checkout-steps .step:not(:last-child)::after {
+            content: '\276F'; /* Right arrow character */
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bbb;
+            font-size: 1.2em;
+        }
+
+        /* Order Summary Styling */
+        .order-summary {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .order-summary h3 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .checkout-cart-items {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .checkout-cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .checkout-cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-details h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.1em;
+            color: var(--text-dark);
+        }
+
+        .item-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+
+        .checkout-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-top: 1px solid #eee;
+            font-size: 1.1em;
+            color: var(--text-dark);
+        }
+
+        .checkout-total.grand-total {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-top: 2px solid var(--primary-color);
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        /* Checkout Form Styling */
+        .checkout-form {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+        }
+
+        .checkout-form h3 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group select {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .form-group .error-message {
+            color: var(--error-color);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        .form-messages {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .form-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .checkout-form .btn-primary {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            justify-content: center;
+        }
+
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none; /* Keeps textarea inline */
+            height: 40px; /* Match height for alignment */
+        }
+
+        .footer-section.contact-form textarea {
+            flex: 2; /* Slightly larger than email field */
+        }
+
+        .footer-section.contact-form .contact-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px; /* Align with fields */
+        }
+
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: #45a049;
+        }
+
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none; /* Hidden on desktop by default */
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            cursor: pointer;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+                transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            }
+
+            .category-nav.active {
+                max-height: 500px; /* Show menu when active */
+                padding: 10px 0; /* Add padding when active on mobile */
+                transition: max-height 0.5s ease-in, padding 0.5s ease-in;
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .dropdown-category .dropdown-content-category {
+                position: static; /* Allow dropdown to flow naturally in mobile menu */
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: rgba(249, 249, 249, 0.9);
+            }
+
+            .dropdown-category .dropdown-content-category a {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span class="badge" id="wishlistQuantity">0</span></span>
+                    </a>
+                    <a href="shopping_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span class="badge" id="cartQuantity">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+         <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                    <li><a href="user_account.html">My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container checkout-page">
+        <h2>Checkout</h2>
+        <div class="checkout-steps">
+            <span class="step active">Cart</span>
+            <span class="step active">Details</span>
+            <span class="step">Confirmation</span>
+        </div>
+
+        <div class="order-summary">
+            <h3>Items in Your Cart</h3>
+            <div id="checkout-cart-items" class="checkout-cart-items">
+                <!-- Cart items will be loaded here by JavaScript -->
+            </div>
+            <div class="checkout-total">
+                <span>Subtotal:</span> <span id="checkout-subtotal">₹0</span>
+            </div>
+            <div class="checkout-total">
+                <span>Shipping:</span> <span id="checkout-shipping">₹0</span>
+            </div>
+            <div class="checkout-total grand-total">
+                <span>Grand Total:</span> <span id="checkout-grand-total">₹0</span>
+            </div>
+        </div>
+
+        <form id="orderDetailsForm" class="checkout-form">
+            <h3>Shipping Information</h3>
+
+            <div class="form-group">
+                <label for="savedAddressSelect">Choose a Saved Address:</label>
+                <select id="savedAddressSelect">
+                    <option value="">-- Select an address --</option>
+                    <!-- Options will be dynamically loaded here -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required>
+                <div class="error-message" id="fullName-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="addressLine1">Address Line 1:</label>
+                <input type="text" id="addressLine1" name="addressLine1" placeholder="Street Address, Apt, etc." required>
+                <div class="error-message" id="addressLine1-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="addressLine2">Address Line 2 (Optional):</label>
+                <input type="text" id="addressLine2" name="addressLine2" placeholder="Building, Landmark, etc.">
+            </div>
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+                <div class="error-message" id="city-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+                <div class="error-message" id="state-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="zipCode">Zip Code:</label>
+                <input type="text" id="zipCode" name="zipCode" required>
+                <div class="error-message" id="zipCode-error"></div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" placeholder="e.g., +91 9876543210" required>
+                <div class="error-message" id="phone-error"></div>
+            </div>
+
+            <h3>Payment Method</h3>
+            <div class="form-group">
+                <label for="paymentMethod">Choose Payment Method:</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="">Select a method</option>
+                    <option value="razorpay">Pay with Razorpay</option>
+                    <option value="cash-on-delivery">Cash on Delivery</option>
+                </select>
+                <div class="error-message" id="paymentMethod-error"></div>
+            </div>
+
+            <div class="form-messages" id="order-form-message"></div>
+            <button type="submit" class="btn btn-primary">Place Order</button>
+        </form>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>About Us</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | All Rights Reserved
+        </div>
+    </footer>
+
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Base URL for your backend API
+            const API_BASE_URL = 'http://localhost:3000';
+
+            // Elements for order details page logic
+            const checkoutCartItems = document.getElementById('checkout-cart-items');
+            const checkoutSubtotal = document.getElementById('checkout-subtotal');
+            const checkoutShipping = document.getElementById('checkout-shipping');
+            const checkoutGrandTotal = document.getElementById('checkout-grand-total');
+            const orderDetailsForm = document.getElementById('orderDetailsForm');
+            const orderFormMessage = document.getElementById('order-form-message');
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+
+            // Shipping Address Form Fields
+            const savedAddressSelect = document.getElementById('savedAddressSelect'); // New dropdown
+            let savedAddresses = []; // To store fetched addresses
+
+            const fullNameInput = document.getElementById('fullName');
+            const addressLine1Input = document.getElementById('addressLine1');
+            const addressLine2Input = document.getElementById('addressLine2');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const zipCodeInput = document.getElementById('zipCode');
+            const phoneInput = document.getElementById('phone');
+
+
+            const shippingCost = 500; // Example shipping cost
+
+            /**
+             * Displays a temporary message in a specific HTML element.
+             * Used for inline form messages or small notifications.
+             * @param {string} elementId - The ID of the HTML element to display the message in.
+             * @param {string} message - The message text.
+             * @param {boolean} isError - True for error (red text), false for success (green text).
+             */
+            function displayFormMessage(elementId, message, isError = true) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = message;
+                    element.classList.remove('success', 'error'); // Clear previous states
+                    element.classList.add(isError ? 'error' : 'success');
+                    element.style.display = message ? 'block' : 'none';
+                }
+            }
+
+            /**
+             * Clears a message from a specific HTML element.
+             * @param {string} elementId - The ID of the HTML element.
+             */
+            function clearFormMessage(elementId) {
+                displayFormMessage(elementId, '', false);
+            }
+
+            function loadCartItems() {
+                // IMPORTANT: Load from 'shoppingCart' which is populated by script.js from backend
+                const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                checkoutCartItems.innerHTML = ''; // Clear existing items
+                let subtotal = 0;
+
+                if (cart.length === 0) {
+                    checkoutCartItems.innerHTML = '<p style="text-align: center; padding: 20px; color: #555;">Your cart is empty. Please go back to cart page.</p>';
+                    checkoutSubtotal.textContent = '₹0';
+                    checkoutShipping.textContent = '₹0';
+                    checkoutGrandTotal.textContent = '₹0';
+                    return;
+                }
+
+                cart.forEach(item => {
+                    // Use item.productPrice and item.productName as per backend Cart model
+                    const itemTotal = item.productPrice * item.quantity;
+                    subtotal += itemTotal;
+
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('checkout-cart-item');
+                    itemElement.innerHTML = `
+                        <img src="${item.productImage}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/000000?text=No+Image';" alt="${item.productName}">
+                        <div class="item-details">
+                            <h4>${item.productName}</h4>
+                            <p>Quantity: ${item.quantity}</p>
+                        </div>
+                        <span class="item-price">₹${itemTotal.toLocaleString('en-IN')}</span>
+                    `;
+                    checkoutCartItems.appendChild(itemElement);
+                });
+
+                checkoutSubtotal.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+                checkoutShipping.textContent = `₹${shippingCost.toLocaleString('en-IN')}`;
+                checkoutGrandTotal.textContent = `₹${(subtotal + shippingCost).toLocaleString('en-IN')}`;
+            }
+
+            // Function to fetch and populate saved addresses
+            async function fetchAndPopulateAddresses() {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.log('No token found, cannot fetch addresses.');
+                    savedAddressSelect.innerHTML = '<option value="">-- Login to see saved addresses --</option>';
+                    savedAddressSelect.disabled = true;
+                    return;
+                }
+                try {
+                    const response = await fetch(`${API_BASE_URL}/addresses`, {
+                        method: 'GET',
+                        headers: { 'x-auth-token': token }
+                    });
+                    if (response.ok) {
+                        savedAddresses = await response.json(); // Store addresses globally
+                        savedAddressSelect.innerHTML = '<option value="">-- Select an address --</option>'; // Reset dropdown
+                        if (savedAddresses.length > 0) {
+                            savedAddresses.forEach((address, index) => {
+                                const option = document.createElement('option');
+                                option.value = index; // Use index to retrieve full object later
+                                option.textContent = `${address.fullName}, ${address.addressLine1}, ${address.city}, ${address.state}`;
+                                savedAddressSelect.appendChild(option);
+                            });
+                            savedAddressSelect.disabled = false;
+                        } else {
+                            savedAddressSelect.innerHTML = '<option value="">-- No saved addresses --</option>';
+                            savedAddressSelect.disabled = true;
+                        }
+                    } else {
+                        console.error('Failed to fetch addresses:', await response.json());
+                        savedAddressSelect.innerHTML = '<option value="">-- Error loading addresses --</option>';
+                        savedAddressSelect.disabled = true;
+                    }
+                } catch (error) {
+                    console.error('Network error fetching addresses:', error);
+                    savedAddressSelect.innerHTML = '<option value="">-- Network error --</option>';
+                    savedAddressSelect.disabled = true;
+                }
+            }
+
+            // Event listener for address selection dropdown
+            savedAddressSelect.addEventListener('change', function() {
+                const selectedIndex = this.value;
+                if (selectedIndex !== "") {
+                    const selectedAddress = savedAddresses[parseInt(selectedIndex)];
+                    fullNameInput.value = selectedAddress.fullName || '';
+                    addressLine1Input.value = selectedAddress.addressLine1 || '';
+                    addressLine2Input.value = selectedAddress.addressLine2 || '';
+                    cityInput.value = selectedAddress.city || '';
+                    stateInput.value = selectedAddress.state || '';
+                    zipCodeInput.value = selectedAddress.zipCode || '';
+                    phoneInput.value = selectedAddress.phoneNumber || '';
+                } else {
+                    // Clear fields if "Select an address" is chosen
+                    fullNameInput.value = '';
+                    addressLine1Input.value = '';
+                    addressLine2Input.value = '';
+                    cityInput.value = '';
+                    stateInput.value = '';
+                    zipCodeInput.value = '';
+                    phoneInput.value = '';
+                }
+            });
+
+
+            loadCartItems();
+            fetchAndPopulateAddresses(); // Call to fetch and populate addresses
+
+            orderDetailsForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                let isValid = true;
+                const formData = new FormData(orderDetailsForm);
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value.trim();
+                }
+
+                // Clear previous error messages
+                document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+                clearFormMessage('order-form-message');
+
+                // Validation logic
+                if (data.fullName === '') {
+                    displayFormMessage('fullName-error', 'Full Name is required.', true);
+                    isValid = false;
+                }
+                if (data.addressLine1 === '') {
+                    displayFormMessage('addressLine1-error', 'Address Line 1 is required.', true);
+                    isValid = false;
+                }
+                if (data.city === '') {
+                    displayFormMessage('city-error', 'City is required.', true);
+                    isValid = false;
+                }
+                if (data.state === '') {
+                    displayFormMessage('state-error', 'State is required.', true);
+                    isValid = false;
+                }
+                if (data.zipCode === '') {
+                    displayFormMessage('zipCode-error', 'Zip Code is required.', true);
+                    isValid = false;
+                } else if (!/^\d{6}$/.test(data.zipCode)) {
+                    displayFormMessage('zipCode-error', 'Zip Code must be 6 digits.', true);
+                    isValid = false;
+                }
+                if (data.phone === '') {
+                    displayFormMessage('phone-error', 'Phone Number is required.', true);
+                    isValid = false;
+                } else if (!/^\+?\d{10,15}$/.test(data.phone)) {
+                    displayFormMessage('phone-error', 'Please enter a valid phone number.', true);
+                    isValid = false;
+                }
+                if (data.paymentMethod === '') {
+                    displayFormMessage('paymentMethod-error', 'Please select a payment method.', true);
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    displayFormMessage('order-form-message', 'Please correct the errors in the form.', true);
+                    return;
+                }
+
+                const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+                if (cart.length === 0) {
+                    displayFormMessage('order-form-message', 'Your cart is empty. Please add items before placing an order.', true);
+                    return;
+                }
+
+                const subtotalValue = parseFloat(checkoutSubtotal.textContent.replace('₹', '').replace(/,/g, ''));
+                const grandTotalValue = parseFloat(checkoutGrandTotal.textContent.replace('₹', '').replace(/,/g, ''));
+
+                const loggedInUser = JSON.parse(localStorage.getItem('user')); // Changed from loggedInUser to user
+                const token = localStorage.getItem('token');
+
+                if (!token || !loggedInUser) {
+                    displayFormMessage('order-form-message', 'You must be logged in to place an order.', true);
+                    return;
+                }
+
+                // Prepare common order details
+                const commonOrderDetails = {
+                    orderId: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
+                    customerInfo: {
+                        fullName: loggedInUser.name, // Use logged-in user's name
+                        email: loggedInUser.email,
+                        phone: data.phone
+                    },
+                    shippingAddress: {
+                        fullName: data.fullName,
+                        addressLine1: data.addressLine1,
+                        addressLine2: data.addressLine2,
+                        city: data.city,
+                        state: data.state,
+                        zipCode: data.zipCode,
+                        phoneNumber: data.phone
+                    },
+                    items: cart,
+                    subtotal: subtotalValue,
+                    shipping: shippingCost,
+                    grandTotal: grandTotalValue
+                };
+
+                if (data.paymentMethod === 'razorpay') {
+                    // Initiate Razorpay payment
+                    try {
+                        const razorpayOrderResponse = await fetch(`${API_BASE_URL}/create-razorpay-order`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-auth-token': token
+                            },
+                            body: JSON.stringify({
+                                amount: Math.round(grandTotalValue * 100), // Razorpay expects amount in smallest unit (paise)
+                                currency: 'INR',
+                                receipt: commonOrderDetails.orderId // Use your internal order ID as receipt
+                            })
+                        });
+
+                        const razorpayOrderData = await razorpayOrderResponse.json();
+
+                        if (!razorpayOrderResponse.ok) {
+                            throw new Error(razorpayOrderData.error || 'Failed to create Razorpay order.');
+                        }
+
+                        // Options for Razorpay Checkout
+                        const options = {
+                            key: 'rzp_test_fSRQZcG87Hnjz5', // YOUR ACTUAL RAZORPAY KEY ID
+                            amount: razorpayOrderData.amount,
+                            currency: razorpayOrderData.currency,
+                            name: 'LaptopStore',
+                            description: 'Order Payment',
+                            order_id: razorpayOrderData.orderId,
+                            handler: async function (response) {
+                                // Payment successful, now finalize order on your backend
+                                const finalOrderData = {
+                                    ...commonOrderDetails,
+                                    paymentMethod: 'razorpay',
+                                    razorpayPaymentId: response.razorpay_payment_id,
+                                    razorpayOrderId: response.razorpay_order_id
+                                };
+
+                                try {
+                                    const placeOrderResponse = await fetch(`${API_BASE_URL}/orders`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'x-auth-token': token
+                                        },
+                                        body: JSON.stringify(finalOrderData)
+                                    });
+
+                                    const placeOrderResult = await placeOrderResponse.json();
+
+                                    if (placeOrderResponse.ok) {
+                                        displayFormMessage('order-form-message', placeOrderResult.message || 'Order placed successfully! Redirecting...', false);
+                                        localStorage.setItem('orderDetails', JSON.stringify(placeOrderResult.order)); // Store the full order object
+                                        localStorage.removeItem('shoppingCart'); // Clear the temporary cart for checkout
+
+                                        // Update header cart quantity immediately after order
+                                        if (typeof updateCartIconQuantity === 'function') {
+                                            updateCartIconQuantity();
+                                        }
+
+                                        setTimeout(() => {
+                                            window.location.href = 'confirmation_page.html';
+                                        }, 2000);
+                                    } else {
+                                        displayFormMessage('order-form-message', placeOrderResult.message || 'Failed to finalize order after payment.', true);
+                                        console.error('Finalize order error:', placeOrderResult.error || placeOrderResult.message);
+                                    }
+                                } catch (error) {
+                                    console.error('Network error finalizing order:', error);
+                                    displayFormMessage('order-form-message', 'Network error. Could not finalize order.', true);
+                                }
+                            },
+                            prefill: {
+                                name: commonOrderDetails.customerInfo.fullName,
+                                email: commonOrderDetails.customerInfo.email,
+                                contact: commonOrderDetails.customerInfo.phone
+                            },
+                            notes: {
+                                address: commonOrderDetails.shippingAddress.addressLine1
+                            },
+                            theme: {
+                                color: '#4CAF50' // Green theme
+                            }
+                        };
+
+                        const rzp = new Razorpay(options);
+                        rzp.open(); // Open Razorpay checkout modal
+
+                        rzp.on('payment.failed', function (response){
+                            console.error('Razorpay payment failed:', response.error);
+                            // Use showModalMessage for user-friendly error display
+                            // showModalMessage(`Payment failed: ${response.error.description || 'Unknown error'}. Please try again.`); // Removed as showModalMessage is not defined here
+                            displayFormMessage('order-form-message', `Payment failed: ${response.error.description || 'Unknown error'}. Please try again.`, true);
+                        });
+
+                    } catch (error) {
+                        console.error('Error during Razorpay initiation:', error);
+                        displayFormMessage('order-form-message', error.message || 'Failed to initiate online payment. Please try again or choose COD.', true);
+                    }
+                } else if (data.paymentMethod === 'cash-on-delivery') {
+                    // Existing Cash on Delivery logic
+                    const finalOrderData = {
+                        ...commonOrderDetails,
+                        paymentMethod: 'cash-on-delivery'
+                    };
+
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/orders`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-auth-token': token
+                            },
+                            body: JSON.stringify(finalOrderData)
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            displayFormMessage('order-form-message', result.message || 'Order placed successfully! Redirecting...', false);
+                            localStorage.setItem('orderDetails', JSON.stringify(result.order)); // Store the full order object
+                            localStorage.removeItem('shoppingCart'); // Clear the temporary cart for checkout
+
+                            if (typeof updateCartIconQuantity === 'function') {
+                                updateCartIconQuantity();
+                            }
+
+                            setTimeout(() => {
+                                window.location.href = 'confirmation_page.html';
+                            }, 2000);
+                        } else {
+                            displayFormMessage('order-form-message', result.message || 'Failed to place order. Please try again.', true);
+                            console.error('Order placement error:', result.error || result.message);
+                        }
+                    } catch (error) {
+                        console.error('Network error placing order:', error);
+                        displayFormMessage('order-form-message', 'Network error. Could not connect to server.', true);
+                    }
+                }
+            });
+        });
+    </script>
+    <!-- Link to your main script.js file here to handle header UI updates -->
+    <script src="script.js"></script>
+</body>
+</html>

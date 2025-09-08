@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Shopping Cart - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+        .dropdown-content a i {
+            margin-right: 5px;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            max-width: 500px;
+        }
+
+        .main-nav .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        /* Nav Icons (Wishlist and Cart) - Adjusted to match wishlist.html */
+        .nav-icons {
+            display: flex;
+            gap: 25px; /* Space between icons */
+        }
+
+        .nav-icons a {
+            text-decoration: none;
+            color: var(--text-dark); /* Color of "Wishlist" / "Cart" text */
+            text-align: center;
+            font-size: 0.9em;
+            position: relative; /* For badge positioning */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .nav-icons a i {
+            font-size: 1.4em; /* Icon size */
+            margin-right: 0; /* Remove horizontal margin */
+            margin-bottom: 5px; /* Space between icon and text */
+            color: var(--secondary-color); /* Icon color */
+        }
+
+        /* Badge for quantity */
+        .nav-icons .cart-count {
+            background-color: var(--accent-color); /* Yellow background */
+            color: var(--dark-bg); /* Dark text */
+            border-radius: 50%;
+            padding: 2px 6px; /* Reduced padding */
+            font-size: 0.7em; /* Reduced font size */
+            position: absolute;
+            top: -8px; /* Adjust top to position above the icon */
+            right: -8px; /* Adjust right to position to the top-right of the icon */
+            min-width: 18px; /* Reduced min-width */
+            height: 18px; /* Added height to ensure circular shape */
+            display: flex; /* Use flex to center content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            font-weight: bold;
+            line-height: 1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Subtle shadow */
+        }
+
+        /* Category Navigation Bar */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Dropdown for categories */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: var(--card-shadow);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            left: 0; /* Align dropdown to the left of its parent */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: #000 !important; /* Force black color for dropdown options */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal; /* Override bold from parent link */
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        .dropdown-category .dropbtn-category i {
+            margin-left: 8px; /* Space between text and arrow */
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-category:hover .dropbtn-category i {
+            transform: rotate(180deg);
+        }
+
+        /* Current page highlight (if applicable) */
+        .category-nav .nav-links li.active a {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 7px;
+        }
+
+        /* Main Content Area - Cart Specific Styling */
+        .cart-page-main {
+            padding: 40px 20px;
+            margin-top: 20px;
+        }
+
+        .cart-container {
+            background-color: #fff; /* White background for the main card area */
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+        }
+
+        .cart-page-main .page-title {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .cart-page-main .page-title::after {
+            content: '';
+            display: block;
+            width: 100px; /* Width of the yellow underline */
+            height: 3px;
+            background-color: var(--accent-color); /* Yellow underline color */
+            margin: 10px auto 0; /* Center the underline */
+        }
+
+        .cart-items {
+            margin-top: 20px;
+            min-height: 150px; /* Ensure some height even if empty */
+        }
+
+        /* Table-like structure for cart items */
+        .cart-header, .cart-item-row { /* Renamed .cart-item to .cart-item-row to avoid conflict with JS variable */
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            gap: 10px; /* Space between columns */
+        }
+
+        .cart-header {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+            border-top: 1px solid #eee;
+            margin-bottom: 10px;
+            padding: 10px 0;
+        }
+
+        .cart-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .cart-header > div,
+        .cart-item-row > div {
+            flex-grow: 1; /* Default flex grow */
+            text-align: left;
+            padding: 0 5px; /* Adjust padding for column content */
+        }
+
+        .cart-header .product-col,
+        .cart-item-row .product-col {
+            flex: 3; /* Product column takes more space */
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-header .details-col,
+        .cart-item-row .details-col {
+            flex: 2;
+        }
+
+        .cart-header .quantity-col,
+        .cart-item-row .quantity-col {
+            flex: 1;
+            text-align: center;
+        }
+
+        .cart-header .price-col,
+        .cart-item-row .price-col {
+            flex: 1;
+            text-align: right;
+        }
+
+        .cart-header .total-col,
+        .cart-item-row .total-col {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .cart-header .remove-col,
+        .cart-item-row .remove-col {
+            flex: 0 0 40px; /* Fixed width for remove button */
+            text-align: center;
+        }
+
+
+        .cart-item-row img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+            border-radius: 5px;
+        }
+
+        .item-details h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+            color: var(--text-dark);
+        }
+
+        .item-details p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center align the quantity controls */
+            gap: 5px;
+        }
+
+        .item-quantity input {
+            width: 40px; /* Smaller width for input */
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1em;
+            -moz-appearance: textfield; /* Hide arrows in Firefox */
+        }
+        /* Hide arrows for Chrome, Safari, Edge */
+        .item-quantity input::-webkit-outer-spin-button,
+        .item-quantity input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .item-quantity button {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #555;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .item-quantity button:hover {
+            background-color: #e0e0e0;
+        }
+
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        .remove-item-btn:hover {
+            color: #a72d3e;
+        }
+
+        .empty-message {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #666;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px dashed var(--border-color);
+        }
+
+        .empty-message a.continue-shopping {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .empty-message a.continue-shopping:hover {
+            text-decoration: underline;
+        }
+
+        .cart-summary {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* Align to the right */
+        }
+
+        .cart-summary div {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 350px; /* Limit summary width */
+            margin-bottom: 10px;
+        }
+
+        .cart-summary span {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .cart-summary #cart-total {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+            width: 100%;
+            max-width: 350px;
+            text-align: right;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: flex-end; /* Align buttons to the right */
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            font-size: 1.05em;
+            border: none; /* Remove default button border */
+        }
+
+        .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Grey button */
+            color: white;
+        }
+
+        .btn-secondary:hover:not(.disabled) {
+            background-color: #5a6268;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color); /* Green button */
+            color: white;
+        }
+
+        .btn-primary:hover:not(.disabled) {
+            background-color: var(--button-hover-primary);
+        }
+
+        .cart-messages {
+            color: var(--error-color);
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: right;
+            display: none; /* Hidden by default */
+        }
+
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        /* Footer Contact Form Improvements */
+        .footer-section .contact-form .input-group {
+            display: flex; /* Use flexbox for side-by-side inputs */
+            gap: 10px; /* Space between inputs */
+            margin-bottom: 10px; /* Space below the input group */
+            flex-wrap: wrap; /* Allow inputs to wrap on smaller screens */
+        }
+
+        .footer-section.contact-form form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap; /* Allows wrapping on small screens */
+            justify-content: center;
+        }
+
+        .footer-section.contact-form input[type="email"],
+        .footer-section.contact-form textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            font-size: 1em;
+            margin: 0;
+            resize: none; /* Keeps textarea inline */
+            height: 40px; /* Match height for alignment */
+        }
+
+        .footer-section.contact-form textarea {
+            flex: 2; /* Slightly larger than email field */
+        }
+
+        .footer-section.contact-form .contact-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            height: 40px; /* Align with fields */
+        }
+
+        .footer-section.contact-form .contact-btn:hover {
+            background-color: #45a049;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none; /* Hidden on desktop */
+            background: none;
+            border: none;
+            color: var(--primary-color); /* Matches logo color */
+            font-size: 1.8em; /* Larger for better tap target */
+            cursor: pointer;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column; /* Stack contact and user actions */
+                align-items: center; /* Center them */
+                padding: 0 10px; /* Adjust padding for smaller screens */
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px; /* Reduce margin */
+                display: flex; /* Use flex to center contact spans */
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px; /* Adjust spacing between contact info */
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center; /* Center login/register or user dropdown */
+            }
+            .user-dropdown .dropdown-content {
+                right: auto; /* Allow it to adjust */
+                left: 50%; /* Center it under the icon */
+                transform: translateX(-50%); /* Pull back by half its width */
+                min-width: 150px; /* Slightly smaller for mobile */
+            }
+
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between; /* Distribute logo, icons, button */
+                align-items: center;
+                padding: 0 10px; /* Adjust padding */
+            }
+            .main-nav .logo {
+                order: 1; /* Logo first */
+                margin-bottom: 0; /* Remove margin-bottom */
+                padding-left: 0; /* Remove padding-left */
+                font-size: 1.6em; /* Slightly smaller logo for mobile */
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button */
+                order: 3; /* Button last in the first row */
+                margin-bottom: 0; /* Remove margin-bottom */
+                padding-right: 0; /* Remove padding-right */
+                margin-left: 15px; /* Add space between cart and toggle */
+            }
+            .nav-icons {
+                order: 2; /* Icons in the middle of the first row */
+                width: auto;
+                margin-left: auto; /* Push to the right, next to logo */
+                justify-content: flex-end; /* Align icons right within their space */
+                margin-top: 0; /* Remove margin-top */
+                padding-right: 0; /* Remove padding-right */
+                gap: 15px; /* Keep consistent gap */
+            }
+            .main-nav .search-bar {
+                order: 4; /* Search bar on its own line */
+                width: 100%; /* Full width */
+                margin: 15px 0 0 0; /* Top margin to separate from elements above */
+                max-width: none; /* Remove max-width constraint */
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1; /* Allow input to grow */
+                border-radius: 5px 0 0 5px; /* Ensure correct border radius */
+                margin-bottom: 0; /* Remove margin if stacked */
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0; /* Ensure correct border radius */
+                width: auto; /* Allow button to size naturally */
+            }
+            /* Ensure search bar remains flex row on smaller screens */
+            .main-nav .search-bar {
+                flex-direction: row; /* Keep input and button in a row */
+                align-items: stretch; /* Stretch items to fill height */
+            }
+
+
+            /* Keep existing category-nav and cart specific mobile adjustments as they seem fine */
+            .category-nav {
+                max-height: 0; /* Hidden by default */
+                overflow: hidden;
+                transition: max-height 0.5s ease-out;
+            }
+            .category-nav.active {
+                max-height: 500px; /* Arbitrary large value to show menu */
+                transition: max-height 0.5s ease-in;
+            }
+            .category-nav .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+            .category-nav .nav-links li a {
+                padding: 10px 0;
+            }
+
+            /* Cart specific mobile adjustments */
+            .cart-header {
+                display: none;
+                overflow: hidden; /* Hide table header on small screens */
+            }
+
+            .cart-item-row { /* Use the new class name */
+                flex-wrap: wrap;
+                justify-content: center;
+                text-align: center;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 20px;
+                box-shadow: var(--card-shadow);
+            }
+
+            .cart-item-row img {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .cart-item-row > div {
+                flex: 1 1 100%; /* Make each column take full width */
+                text-align: center;
+                padding: 5px 0;
+            }
+
+            /* Adjust flex for specific columns in mobile view if needed */
+            .cart-item-row .product-col {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
+            .cart-item-row .details-col {
+                order: 1; /* Keep details above quantity/price */
+                font-size: 0.9em;
+            }
+            .cart-item-row .quantity-col {
+                order: 2; /* After details */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+            .cart-item-row .price-col,
+            .cart-item-row .total-col {
+                order: 3; /* After quantity */
+                text-align: center;
+                font-size: 1.1em;
+            }
+            .cart-item-row .remove-col {
+                order: 4; /* Last */
+                flex: 1 1 100%;
+                margin-top: 10px;
+            }
+
+            .cart-summary {
+                align-items: center; /* Center summary on mobile */
+            }
+            .cart-summary div,
+            .cart-summary #cart-total {
+                max-width: 100%; /* Allow summary to take full width */
+                text-align: center;
+            }
+            .cart-actions {
+                flex-direction: column;
+                width: 100%;
+                align-items: center;
+            }
+            .cart-actions .btn {
+                width: 80%; /* Make buttons wider */
+                margin-bottom: 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-section {
+                text-align: center;
+                margin-bottom: 30px;
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Ensure search bar remains in a row even on very small screens */
+            .main-nav .search-bar {
+                flex-direction: row; /* Keep input and button in a row */
+                align-items: stretch; /* Stretch items to fill height */
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px 0 0 5px; /* Keep the rounded corners */
+                margin-bottom: 0; /* Ensure no stacking margin */
+            }
+            .search-bar button {
+                border-radius: 0 5px 5px 0; /* Keep the rounded corners */
+                width: auto; /* Do not force full width */
+            }
+
+            /* Footer contact form on very small screens */
+            .footer-section .contact-form .input-group {
+                flex-direction: column; /* Stack email and message on very small screens */
+                gap: 0; /* Remove gap when stacked */
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%; /* Full width when stacked */
+                margin-bottom: 10px; /* Add margin between stacked inputs */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span id="wishlist-quantity" class="cart-count">0</span></span>
+                    </a>
+                    <a href="add_to_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span id="cart-quantity" class="cart-count">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="laptops.html" class="dropbtn-category">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="laptops.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="laptops.html#business-laptops">Business Laptops</a>
+                            <a href="laptops.html#ultrabooks">Ultrabooks</a>
+                            <a href="laptops.html#2-in-1-laptops">2-in-1 Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container cart-page-main">
+        <h1 class="page-title">Your Shopping Cart</h1>
+        <div class="cart-container">
+            <div class="cart-items" id="cart-items-container">
+                <div class="cart-header">
+                    <div class="product-col">Product</div>
+                    <div class="details-col">Details</div>
+                    <div class="quantity-col">Quantity</div>
+                    <div class="price-col">Price</div>
+                    <div class="total-col">Total</div>
+                    <div class="remove-col">Remove</div>
+                </div>
+                <!-- Cart items will be dynamically loaded here -->
+                <p class="empty-message" id="empty-cart-message" style="display: none;">Your cart is empty. <a href="index.html" class="continue-shopping">Start Shopping!</a></p>
+            </div>
+            <div class="cart-summary">
+                <div>
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal">₹0</span>
+                </div>
+                <div>
+                    <span>Shipping:</span>
+                    <span id="cart-shipping">₹0</span>
+                </div>
+                <div>
+                    <span>Tax:</span>
+                    <span id="cart-tax">₹0</span>
+                </div>
+                <span id="cart-total">Total: ₹0</span>
+            </div>
+            <div class="cart-actions">
+                <a href="index.html" class="btn btn-secondary">Continue Shopping</a>
+                <button id="proceedToCheckoutBtn" class="btn btn-primary">Proceed to Checkout</button>
+            </div>
+            <div class="cart-messages" id="cart-messages"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <div class="input-group">
+                            <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                            <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        </div>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

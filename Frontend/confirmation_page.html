@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Laptop Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from the provided design screenshots and shopping-cart-page structure */
+
+        /* Variables for consistent colors */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .main-nav .search-bar {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            max-width: 500px;
+        }
+
+        .main-nav .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .main-nav .search-bar button {
+            background-color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            outline: none;
+        }
+
+        .main-nav .search-bar button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        /* Nav Icons (Wishlist and Cart) - Adjusted to match shopping-cart-page */
+        .nav-icons {
+            display: flex;
+            gap: 25px; /* Space between icons */
+        }
+
+        .nav-icons a {
+            text-decoration: none;
+            color: var(--text-dark); /* Color of "Wishlist" / "Cart" text */
+            text-align: center;
+            font-size: 0.9em;
+            position: relative; /* For badge positioning */
+            display: flex;
+            flex-direction: column; /* Stack icon and text vertically */
+            align-items: center; /* Center horizontally */
+        }
+
+        .nav-icons a i {
+            font-size: 1.4em; /* Icon size */
+            margin-right: 0; /* Remove horizontal margin */
+            margin-bottom: 5px; /* Space between icon and text */
+            color: var(--secondary-color); /* Icon color */
+        }
+
+        .nav-icon-text {
+            /* This div now wraps only the text, the badge is positioned relative to the <a> */
+            display: block; /* Ensure it takes its own line */
+            position: static; /* Reset to default positioning */
+        }
+
+        /* Badge for quantity */
+        .nav-icon-text span {
+            background-color: var(--accent-color); /* Yellow background */
+            color: var(--text-dark); /* Black text */
+            border-radius: 50%;
+            padding: 1px 5px; /* Reduced padding */
+            font-size: 0.6em; /* Reduced font size */
+            position: absolute;
+            top: -5px; /* Adjust top to position above the icon */
+            right: -10px; /* Adjust right to position to the top-right of the icon */
+            min-width: 16px; /* Reduced min-width */
+            height: 16px; /* Added height to ensure circular shape */
+            display: flex; /* Use flex to center content */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+
+        /* Category Navigation Bar - Base (for desktop) */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            /* Ensure it's always visible and takes up space on desktop */
+            display: block; /* Ensure it's not display:none */
+            max-height: none;
+            overflow: visible;
+            transition: none;
+            cursor: default;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Always flex row on desktop */
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Dropdown for categories */
+        .dropdown-category .dropdown-content-category {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: var(--card-shadow);
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
+            left: 0; /* Align dropdown to the left of its parent */
+        }
+
+        .dropdown-category .dropdown-content-category a {
+            color: #000 !important; /* Force black color for dropdown options */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-weight: normal; /* Override bold from parent link */
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .dropdown-category .dropdown-content-category a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-category:hover .dropdown-content-category {
+            display: block;
+        }
+
+        .dropdown-category .dropbtn-category i {
+            margin-left: 8px; /* Space between text and arrow */
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-category:hover .dropbtn-category i {
+            transform: rotate(180deg);
+        }
+
+        /* Current page highlight (if applicable) */
+        .category-nav .nav-links li.active a {
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 7px;
+        }
+
+        /* Main Content Area - Order Details Specific Styling */
+        .checkout-page {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff; /* White background like cart-container */
+            border-radius: 8px;
+            box-shadow: var(--card-shadow); /* Consistent shadow */
+        }
+
+        .checkout-page h2 {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .checkout-page h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        .checkout-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 20px; /* Space between steps */
+        }
+
+        .checkout-steps .step {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #e0e0e0;
+            color: #777;
+            font-weight: bold;
+            font-size: 0.9em;
+            position: relative;
+        }
+
+        .checkout-steps .step.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .checkout-steps .step:not(:last-child)::after {
+            content: '\276F'; /* Right arrow character */
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bbb;
+            font-size: 1.2em;
+        }
+
+        /* Confirmation Message Styling */
+        .confirmation-message {
+            text-align: center;
+            background-color: #e6ffe6; /* Light green for success */
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .confirmation-message .success-icon {
+            font-size: 4em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .confirmation-message h3 {
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .confirmation-message p {
+            font-size: 1.1em;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* Order Details Summary Styling */
+        .order-details-summary {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .order-details-summary h3 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .order-details-summary p {
+            margin-bottom: 10px;
+            font-size: 1em;
+            color: var(--text-dark);
+        }
+
+        .order-details-summary p strong {
+            color: var(--secondary-color);
+        }
+
+        .order-details-summary h4 {
+            font-size: 1.4em;
+            color: var(--primary-color);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .order-details-summary ul {
+            list-style: none;
+            padding: 0;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            max-height: 250px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+
+        .order-details-summary ul li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .order-details-summary ul li:last-child {
+            border-bottom: none;
+        }
+
+        .order-details-summary ul li span:first-child {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        /* Confirmation Actions (Buttons) */
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .confirmation-actions .btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            font-size: 1.05em;
+            border: none;
+            flex: 1; /* Allow buttons to take equal width */
+            max-width: 250px; /* Limit max width */
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--secondary-color);
+            border: 1px solid #ccc;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--button-hover-secondary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .footer-section.contact-form form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+    justify-content: center;
+}
+
+.footer-section.contact-form input[type="email"],
+.footer-section.contact-form textarea {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1em;
+    margin: 0;
+    resize: none; /* Keeps textarea inline */
+    height: 40px; /* Match height for alignment */
+}
+
+.footer-section.contact-form textarea {
+    flex: 2; /* Slightly larger than email field */
+}
+
+.footer-section.contact-form .contact-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    height: 40px; /* Align with fields */
+}
+
+.footer-section.contact-form .contact-btn:hover {
+    background-color: #45a049;
+}
+
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            display: none; /* Hidden on desktop by default */
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            cursor: pointer;
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+                transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            }
+
+            .category-nav.active {
+                max-height: 500px; /* Show menu when active */
+                padding: 10px 0; /* Add padding when active on mobile */
+                transition: max-height 0.5s ease-in, padding 0.5s ease-in;
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .dropdown-category .dropdown-content-category {
+                position: static; /* Allow dropdown to flow naturally in mobile menu */
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: rgba(249, 249, 249, 0.9);
+            }
+
+            .dropdown-category .dropdown-content-category a {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            .search-bar input[type="text"] {
+                border-radius: 5px;
+                border-right: 1px solid var(--border-color);
+                margin-bottom: 10px;
+            }
+            .search-bar button {
+                border-radius: 5px;
+                width: 100%;
+            }
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-out-view" data-user-area="logged-out">
+                        <a href="login.html">Login</a> | <a href="signup.html">Register</a>
+                    </div>
+                    <div class="logged-in-view" data-user-area="logged-in" style="display: none;">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">U</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, User</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="index.html" class="logo">LaptopStore</a>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span id="wishlist-quantity">0</span></span>
+                    </a>
+                    <a href="add_to_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span id="cart-quantity">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li class="dropdown-category">
+                        <a href="laptops.html" class="dropbtn-category">Laptops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="laptops.html#gaming-laptops">Gaming Laptops</a>
+                            <a href="laptops.html#business-laptops">Business Laptops</a>
+                            <a href="laptops.html#ultrabooks">Ultrabooks</a>
+                            <a href="laptops.html#2-in-1-laptops">2-in-1 Laptops</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="desktops.html" class="dropbtn-category">Desktops <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="desktops.html#gaming-desktops">Gaming Desktops</a>
+                            <a href="desktops.html#workstation-desktops">Workstation Desktops</a>
+                            <a href="desktops.html#mini-pcs">Mini PCs</a>
+                        </div>
+                    </li>
+                    <li class="dropdown-category">
+                        <a href="gaming.html" class="dropbtn-category">Gaming <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content-category">
+                            <a href="gaming.html#consoles">Consoles</a>
+                            <a href="gaming.html#pc-gaming-accessories">PC Gaming Accessories</a>
+                            <a href="gaming.html#gaming-monitors">Gaming Monitors</a>
+                        </div>
+                    </li>
+                    <li><a href="monitors.html">Monitors</a></li>
+                    <li><a href="printers.html">Printers & Scanners</a></li>
+                    <li><a href="accessories.html">Accessories</a></li>
+                    <li><a href="offers.html">Offers</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="track_order.html">Track Order</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container checkout-page">
+        <h2>Order Confirmation</h2>
+        <div class="checkout-steps">
+            <span class="step active">Cart</span>
+            <span class="step active">Details</span>
+            <span class="step active">Confirmation</span>
+        </div>
+
+        <div class="confirmation-message">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h3>Thank You for Your Order!</h3>
+            <p>Your order has been placed successfully and will be processed shortly.</p>
+        </div>
+
+        <div class="order-details-summary">
+            <h3>Order Summary</h3>
+            <p><strong>Order ID:</strong> <span id="confirm-order-id"></span></p>
+            <p><strong>Order Date:</strong> <span id="confirm-order-date"></span></p>
+            <p><strong>Customer Name:</strong> <span id="confirm-customer-name"></span></p>
+            <p><strong>Customer Email:</strong> <span id="confirm-customer-email"></span></p>
+            <p><strong>Shipping Address:</strong> <span id="confirm-shipping-address"></span></p>
+            <p><strong>Payment Method:</strong> <span id="confirm-payment-method"></span></p>
+            <p><strong>Total Amount:</strong> <span id="confirm-total-amount"></span></p>
+
+            <h4>Items Ordered:</h4>
+            <ul id="confirm-order-items">
+                <!-- Order items will be loaded here by JavaScript -->
+            </ul>
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+            <a href="track_order.html" class="btn btn-secondary">Track My Order</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore</h3>
+                    <p>
+                        Your one-stop shop for the latest laptops, accessories, and more. We offer competitive prices and excellent customer service.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Track Order</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Us</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Designed by Aryan
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements for order confirmation details
+            const confirmOrderId = document.getElementById('confirm-order-id');
+            const confirmOrderDate = document.getElementById('confirm-order-date');
+            const confirmCustomerName = document.getElementById('confirm-customer-name');
+            const confirmCustomerEmail = document.getElementById('confirm-customer-email');
+            const confirmShippingAddress = document.getElementById('confirm-shipping-address');
+            const confirmPaymentMethod = document.getElementById('confirm-payment-method');
+            const confirmTotalAmount = document.getElementById('confirm-total-amount');
+            const confirmOrderItems = document.getElementById('confirm-order-items');
+
+            // Load order details from local storage
+            const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
+
+            if (orderDetails) {
+                confirmOrderId.textContent = orderDetails.orderId; // Use orderId from backend
+                // Format date nicely
+                const orderDate = new Date(orderDetails.orderDate);
+                confirmOrderDate.textContent = orderDate.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                confirmCustomerName.textContent = orderDetails.customerInfo.fullName; // Access nested customerInfo
+                confirmCustomerEmail.textContent = orderDetails.customerInfo.email; // Access nested customerInfo
+                confirmShippingAddress.textContent = `${orderDetails.shippingAddress.address}, ${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.zipCode}`; // Access nested shippingAddress
+                confirmPaymentMethod.textContent = orderDetails.paymentMethod;
+                confirmTotalAmount.textContent = `₹${orderDetails.grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+                confirmOrderItems.innerHTML = ''; // Clear existing items
+                orderDetails.items.forEach(item => {
+                    const listItem = document.createElement('li');
+                    // Use item.productName and item.productPrice to match the structure from backend
+                    listItem.innerHTML = `
+                        <span>${item.productName} (x${item.quantity})</span>
+                        <span>₹${(item.productPrice * item.quantity).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    `;
+                    confirmOrderItems.appendChild(listItem);
+                });
+            } else {
+                // Fallback if no order details found (e.g., direct access to page)
+                document.querySelector('.confirmation-message h3').textContent = 'No Order Found';
+                document.querySelector('.confirmation-message p').textContent = 'It seems like you accessed this page directly or your order details have expired. Please continue shopping.';
+                document.querySelector('.order-details-summary').style.display = 'none'; // Hide order summary
+            }
+        });
+    </script>
+    <!-- Link to your main script.js file here to handle header UI updates -->
+    <script src="script.js"></script>
+</body>
+</html>

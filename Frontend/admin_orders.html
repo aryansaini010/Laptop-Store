@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS adapted from existing pages (e.g., shopping-cart-page, order_details, admin_login) */
+
+        /* Variables for consistent colors */
+        :root {
+            --primary-color: #4CAF50; /* Green from the header/nav */
+            --secondary-color: #333; /* Dark grey/black from top header */
+            --accent-color: #ffcc00; /* Yellow for highlights */
+            --background-light: #f0f8f0; /* Light green background */
+            --text-dark: #333;
+            --text-light: #fff;
+            --border-color: #ddd;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --button-hover-primary: #45a049;
+            --button-hover-secondary: #e0e0e0;
+            --error-color: #dc3545; /* Red for error messages */
+            --dark-bg: #222; /* Dark background color from wishlist header */
+        }
+
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Global Message Area */
+        #global-message-area {
+            text-align: center;
+            padding: 10px;
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            display: none;
+            font-weight: bold;
+        }
+
+        /* Header */
+        header {
+            box-shadow: var(--card-shadow); /* Add shadow to entire header */
+            background-color: #fff; /* Default background */
+        }
+
+        .top-bar {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: var(--text-light);
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar .contact-info span {
+            margin-right: 20px;
+        }
+
+        .top-bar .contact-info i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* User Actions in Top Bar (Modified for Admin Panel) */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between elements */
+        }
+
+        .user-actions a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-actions a:hover {
+            color: var(--accent-color);
+        }
+
+        .user-actions .user-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .user-actions .user-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+
+        .user-actions .user-name {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-right: 5px;
+        }
+
+        .user-actions .dropdown-arrow {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-dropdown .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 180px;
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            top: 100%;
+            right: 0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-dark);
+        }
+
+        .dropdown-content a {
+            color: var(--error-color); /* Red for logout */
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .dropdown-content a:hover {
+            color: #c82333;
+        }
+
+
+        /* Main Navigation (Logo, Search, Icons) - Simplified for Admin Panel */
+        .main-nav {
+            padding: 15px 0;
+            background-color: #fff; /* White background for main nav */
+            border-bottom: 1px solid #eee;
+        }
+
+        .main-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* Hide search bar and nav icons for admin panel */
+        .main-nav .search-bar,
+        .main-nav .nav-icons {
+            display: none;
+        }
+
+        /* Category Navigation Bar - Simplified for Admin Panel */
+        .category-nav {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+            display: block;
+            max-height: none;
+            overflow: visible;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out; /* Added transition */
+            cursor: default;
+        }
+
+        .category-nav .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .category-nav .nav-links li {
+            position: relative;
+            margin-right: 30px;
+        }
+
+        .category-nav .nav-links li a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+            font-weight: bold;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-nav .nav-links li a:hover {
+            color: #f0f0f0;
+        }
+
+        /* Hide dropdowns for admin panel nav */
+        .dropdown-category {
+            display: none;
+        }
+
+        /* Main Content Area - Orders Management Specific Styling */
+        .admin-orders {
+            padding: 40px 20px;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .admin-orders h2 {
+            text-align: center;
+            font-size: 2.5em;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .admin-orders h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: var(--accent-color);
+            margin: 10px auto 0;
+        }
+
+        /* --- NEW: Top Controls (Search & Filter Button) --- */
+        .top-controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 15px; /* Space between search and filter */
+        }
+
+        .search-bar-left {
+            display: flex;
+            flex-grow: 1; /* Allow search bar to take available space */
+            max-width: 400px; /* Limit search bar width */
+            gap: 5px;
+        }
+
+        .search-bar-left input[type="text"] {
+            flex-grow: 1;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.9em;
+            background-color: white;
+            color: var(--text-dark);
+        }
+
+        .search-bar-left button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-bar-left button:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .filters-dropdown-right {
+            position: relative;
+            display: inline-block;
+        }
+
+        .toggle-filters-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-filters-btn:hover {
+            background-color: #555;
+        }
+
+        .filters-dropdown-content {
+            display: none; /* Hidden by default */
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 280px; /* Adjust width as needed */
+            box-shadow: var(--card-shadow);
+            z-index: 100; /* Ensure it's above other content */
+            top: 100%; /* Position below the button */
+            right: 0; /* Align to the right */
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px; /* Space below button */
+            border: 1px solid var(--border-color);
+        }
+
+        .filters-dropdown-content.show {
+            display: block; /* Show when 'show' class is added */
+        }
+
+        .filters-dropdown-content .filter-item {
+            margin-bottom: 15px;
+        }
+
+        .filters-dropdown-content .filter-item label {
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: bold;
+            display: block; /* Make label a block element */
+        }
+
+        .filters-dropdown-content .filter-item input[type="text"],
+        .filters-dropdown-content .filter-item input[type="date"],
+        .filters-dropdown-content .filter-item input[type="number"],
+        .filters-dropdown-content .filter-item select {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 0.9em;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: white;
+            color: var(--text-dark);
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown .apply-filters-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown .apply-filters-btn:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown .clear-filters-btn {
+            background-color: #f44336; /* Red for clear */
+            color: white;
+        }
+
+        .filters-dropdown-content .filter-buttons-dropdown .clear-filters-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* --- End NEW: Top Controls --- */
+
+
+        .admin-orders-table-container {
+            overflow-x: auto; /* Enable horizontal scrolling for small screens */
+            margin-top: 30px;
+        }
+
+        .admin-orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden; /* Ensures rounded corners apply to table */
+        }
+
+        .admin-orders-table th,
+        .admin-orders-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-orders-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .admin-orders-table tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .admin-orders-table td {
+            color: var(--text-dark);
+            font-size: 0.95em;
+        }
+
+        .admin-orders-table .order-id {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .admin-orders-table .customer-info {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .admin-orders-table .order-status-select {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .admin-orders-table .order-status-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .admin-orders-table .status-update-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .admin-orders-table .status-update-btn:hover {
+            background-color: var(--button-hover-primary);
+        }
+
+        .admin-orders-table .status-update-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .order-status-badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: capitalize;
+            font-size: 0.85em;
+            display: inline-block;
+        }
+
+        /* Status colors (reused from track_order.html) */
+        .status-pending { background-color: #ffeb3b; color: #333; } /* Yellow */
+        .status-processing { background-color: #2196f3; color: white; } /* Blue */
+        .status-shipped { background-color: #ff9800; color: white; } /* Orange */
+        .status-delivered { background-color: var(--primary-color); color: white; } /* Green */
+        .status-cancelled { background-color: var(--error-color); color: white; } /* Red */
+
+        .admin-messages {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .admin-messages.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .admin-messages.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-bg); /* Dark background from wishlist */
+            color: #f4f4f4; /* Lighter text for footer */
+            padding: 40px 0 20px;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding-right: 20px; /* Add some spacing */
+        }
+
+        .footer-section:last-child {
+            padding-right: 0;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section .logo-text {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p,
+        .footer-section ul {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .footer-section .contact span {
+            display: block;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+
+        .footer-section .contact span i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+.footer-section.contact-form form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap; /* Allows wrapping on small screens */
+    justify-content: center;
+}
+
+.footer-section.contact-form input[type="email"],
+.footer-section.contact-form textarea {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 1em;
+    margin: 0;
+    resize: none; /* Keeps textarea inline */
+    height: 40px; /* Match height for alignment */
+}
+
+.footer-section.contact-form textarea {
+    flex: 2; /* Slightly larger than email field */
+}
+
+.footer-section.contact-form .contact-btn {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    height: 40px; /* Align with fields */
+}
+
+.footer-section.contact-form .contact-btn:hover {
+    background-color: #45a049;
+}
+
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-button {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            cursor: pointer;
+            display: none; /* Hidden by default, shown via media query */
+        }
+
+        /* Basic responsiveness */
+        @media (max-width: 992px) {
+            .main-nav .search-bar {
+                margin: 0 10px;
+            }
+            .nav-icons {
+                gap: 15px;
+            }
+            .category-nav .nav-links li {
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Top Bar adjustments */
+            .top-bar .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .top-bar .contact-info {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .top-bar .contact-info span {
+                margin: 0 8px;
+            }
+            .user-actions {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+                justify-content: center;
+            }
+            .user-dropdown .dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                min-width: 150px;
+            }
+
+            /* Main Navigation adjustments */
+            .main-nav .container {
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 10px;
+            }
+            .main-nav .logo {
+                order: 1;
+                margin-bottom: 0;
+                padding-left: 0;
+                font-size: 1.6em;
+            }
+            .mobile-menu-button {
+                display: block; /* Show mobile menu button on mobile */
+                order: 3;
+                margin-bottom: 0;
+                padding-right: 0;
+                margin-left: 15px;
+            }
+            .nav-icons {
+                order: 2;
+                width: auto;
+                margin-left: auto;
+                justify-content: flex-end;
+                margin-top: 0;
+                padding-right: 0;
+                gap: 15px;
+            }
+            .main-nav .search-bar {
+                order: 4;
+                width: 100%;
+                margin: 15px 0 0 0;
+                max-width: none;
+            }
+            .main-nav .search-bar input[type="text"] {
+                flex-grow: 1;
+                border-radius: 5px 0 0 5px;
+                margin-bottom: 0;
+            }
+            .main-nav .search-bar button {
+                border-radius: 0 5px 5px 0;
+                width: auto;
+            }
+            .main-nav .search-bar {
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            /* Mobile menu specific styles */
+            .category-nav {
+                max-height: 0; /* Hidden by default on mobile */
+                overflow: hidden;
+                padding: 0; /* Remove padding when collapsed on mobile */
+                /* Transition is now handled by JS for dynamic max-height */
+            }
+
+            .category-nav.active {
+                /* max-height and padding are set by JS */
+                overflow: visible; /* Ensure content is visible when active */
+            }
+
+            .category-nav .nav-links {
+                flex-direction: column; /* Stack links vertically on mobile */
+                align-items: center; /* Center items on mobile */
+            }
+
+            .category-nav .nav-links li {
+                margin: 5px 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .dropdown-category .dropdown-content-category {
+                position: static; /* Allow dropdown to flow naturally in mobile menu */
+                width: 100%;
+                box-shadow: none;
+                border-radius: 0;
+                background-color: rgba(249, 249, 249, 0.9);
+            }
+
+            .dropdown-category .dropdown-content-category a {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            /* Responsive for table */
+            .admin-orders-table-container {
+                border: 1px solid #eee; /* Add border for mobile view */
+                border-radius: 8px;
+            }
+            .admin-orders-table,
+            .admin-orders-table tbody,
+            .admin-orders-table tr,
+            .admin-orders-table td,
+            .admin-orders-table th {
+                display: block; /* Make table elements stack */
+            }
+            .admin-orders-table thead {
+                display: none; /* Hide table header on mobile */
+            }
+            .admin-orders-table tr {
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: var(--card-shadow);
+            }
+            .admin-orders-table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                /* Ensure status select and button are aligned correctly */
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                min-height: 40px; /* Give some height for content */
+            }
+            .admin-orders-table td::before {
+                content: attr(data-label); /* Use data-label for pseudo-elements */
+                position: absolute;
+                left: 15px;
+                width: calc(50% - 30px);
+                padding-right: 10px;
+                white-space: nowrap;
+                font-weight: bold;
+                color: var(--secondary-color);
+                text-align: left;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .admin-orders-table td:last-child {
+                border-bottom: none; /* No border for last cell in row */
+            }
+            .admin-orders-table .status-update-btn {
+                margin-left: 0;
+                margin-top: 10px; /* Add margin top for button below select */
+                width: 100%;
+                box-sizing: border-box; /* Include padding and border in width */
+            }
+            .admin-orders-table .order-status-select {
+                width: 100%;
+                box-sizing: border-box; /* Include padding and border in width */
+            }
+            /* Adjustments for the status/action column on mobile */
+            .admin-orders-table td[data-label="Status"],
+            .admin-orders-table td[data-label="Action"] {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                justify-content: center;
+            }
+            .admin-orders-table td[data-label="Status"]::before,
+            .admin-orders-table td[data-label="Action"]::before {
+                align-self: flex-start; /* Align pseudo-element to start */
+            }
+
+            /* Mobile adjustments for top controls */
+            .top-controls-container {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items to fill width */
+            }
+            .search-bar-left {
+                max-width: 100%; /* Full width on mobile */
+                margin-bottom: 15px;
+            }
+            .filters-dropdown-right {
+                width: 100%; /* Full width for dropdown container */
+                text-align: center; /* Center the toggle button */
+            }
+            .toggle-filters-btn {
+                width: 100%; /* Full width for the toggle button */
+                justify-content: center; /* Center content inside button */
+            }
+            .filters-dropdown-content {
+                position: static; /* Allow it to flow naturally */
+                width: 100%;
+                margin-top: 15px; /* Space from button */
+                box-shadow: none; /* Remove shadow if it looks odd in flow */
+                border: none; /* Remove border if it looks odd in flow */
+            }
+            .filters-dropdown-content .filter-buttons-dropdown {
+                flex-direction: column; /* Stack apply/clear buttons */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-section .contact-form input[type="email"],
+            .footer-section .contact-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="global-message-area" style="text-align: center; padding: 10px; background-color: var(--accent-color); color: var(--dark-bg); display: none;"></div>
+
+        <div class="top-bar">
+            <div class="container">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 12345 67890</span>
+                    <span><i class="fas fa-envelope"></i> support@laptopstore.com</span>
+                </div>
+                <div class="user-actions" id="userActions">
+                    <div class="logged-in-view" data-user-area="logged-in">
+                        <div class="user-dropdown">
+                            <span class="user-icon" id="userInitialIcon">A</span>
+                            <span id="userNameDisplay" class="user-name">Welcome, Admin</span> <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            <div class="dropdown-content">
+                                <span id="dropdownUserName"></span>
+                                <span id="dropdownUserEmail"></span>
+                                <a href="#" id="adminLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="main-nav">
+            <div class="container">
+                <a href="admin_dashboard.html" class="logo">Admin Panel</a>
+                <div class="search-bar" style="display: none;">
+                    <input type="text" placeholder="Search for products...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons" style="display: none;">
+                    <a href="wishlist.html">
+                        <i class="fas fa-heart"></i>
+                        <span class="nav-icon-text">Wishlist <span id="wishlist-quantity">0</span></span>
+                    </a>
+                    <a href="add_to_cart.html">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="nav-icon-text">Cart <span id="cart-quantity">0</span></span>
+                    </a>
+                </div>
+                <button id="mobile-menu-button" class="mobile-menu-button"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+
+        <div class="category-nav" id="categoryNav">
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="admin_dashboard.html">Dashboard</a></li>
+                    <li><a href="admin_orders.html">Manage Orders</a></li>
+                    <li><a href="admin_users.html">Manage Users</a></li>
+                    <li><a href="admin_products.html">Manage Products</a></li>
+                    </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container admin-orders">
+        <h2>Manage Customer Orders</h2>
+        <div class="admin-messages" id="admin-orders-message"></div>
+
+        <!-- NEW: Top Controls (Search & Filter Button) -->
+        <div class="top-controls-container">
+            <div class="search-bar-left">
+                <input type="text" id="search-input" placeholder="Search orders (ID, Customer)...">
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="filters-dropdown-right">
+                <button id="toggle-filters-btn" class="toggle-filters-btn">
+                    <i class="fas fa-filter"></i> Filters <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </button>
+                <div id="filters-dropdown-content" class="filters-dropdown-content">
+                    <div class="filter-item">
+                        <label for="status-filter">Order Status</label>
+                        <select id="status-filter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label for="payment-method-filter">Payment Method</label>
+                        <select id="payment-method-filter">
+                            <option value="">All Methods</option>
+                            <option value="cash-on-delivery">Cash on Delivery</option>
+                            <option value="Razorpay">Razorpay</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label for="date-from-filter">Date From</label>
+                        <input type="date" id="date-from-filter">
+                    </div>
+                    <div class="filter-item">
+                        <label for="date-to-filter">Date To</label>
+                        <input type="date" id="date-to-filter">
+                    </div>
+                    <div class="filter-item">
+                        <label for="amount-min-filter">Min Amount</label>
+                        <input type="number" id="amount-min-filter" placeholder="Min Amount">
+                    </div>
+                    <div class="filter-item">
+                        <label for="amount-max-filter">Max Amount</label>
+                        <input type="number" id="amount-max-filter" placeholder="Max Amount">
+                    </div>
+                    <div class="filter-buttons-dropdown">
+                        <button id="apply-filters-dropdown-btn" class="apply-filters-btn"><i class="fas fa-filter"></i> Apply</button>
+                        <button id="clear-filters-dropdown-btn" class="clear-filters-btn"><i class="fas fa-redo"></i> Clear</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END NEW: Top Controls -->
+
+        <div class="admin-orders-table-container">
+            <table class="admin-orders-table">
+                <thead>
+                    <tr>
+                        <th>S.No.</th> <!-- NEW: Serial Number column -->
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                    <tr><td colspan="9" style="text-align: center;">Loading orders...</td></tr> <!-- Updated colspan -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section about">
+                    <h3 class="logo-text">LaptopStore Admin</h3>
+                    <p>
+                        Admin control panel for managing your Laptop Store operations.
+                    </p>
+                    <div class="contact">
+                        <span><i class="fas fa-phone"></i> &nbsp; +91-123-456-7890</span>
+                        <span><i class="fas fa-envelope"></i> &nbsp; support@laptopstore.com</span>
+                    </div>
+                </div>
+                <div class="footer-section links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="admin_dashboard.html">Dashboard</a></li>
+                        <li><a href="admin_orders.html">Manage Orders</a></li>
+                        <li><a href="#">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section contact-form">
+                    <h3>Contact Admin</h3>
+                    <form action="#">
+                        <input type="email" name="email" class="text-input" placeholder="Your email address...">
+                        <textarea name="message" class="text-input" placeholder="Your message..."></textarea>
+                        <button type="submit" class="btn contact-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 laptopstore.com | Admin Panel
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const API_BASE_URL = 'http://localhost:3000';
+            const ordersTableBody = document.getElementById('orders-table-body');
+            const adminOrdersMessage = document.getElementById('admin-orders-message');
+
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const userInitialIcon = document.getElementById('userInitialIcon');
+            const dropdownUserName = document.getElementById('dropdownUserName');
+            const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+
+            // NEW: Filter & Search elements
+            const searchInput = document.getElementById('search-input');
+            const searchButton = document.getElementById('search-button'); // New search button
+            const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+            const filtersDropdownContent = document.getElementById('filters-dropdown-content');
+
+            const statusFilter = document.getElementById('status-filter');
+            const paymentMethodFilter = document.getElementById('payment-method-filter');
+            const dateFromFilter = document.getElementById('date-from-filter');
+            const dateToFilter = document.getElementById('date-to-filter');
+            const amountMinFilter = document.getElementById('amount-min-filter');
+            const amountMaxFilter = document.getElementById('amount-max-filter');
+            const applyFiltersDropdownBtn = document.getElementById('apply-filters-dropdown-btn'); // Renamed
+            const clearFiltersDropdownBtn = document.getElementById('clear-filters-dropdown-btn'); // Renamed
+
+
+            const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+            const finalStatuses = ['delivered', 'cancelled']; // Array for statuses that should prevent further changes
+
+            /**
+             * Displays a temporary message in a specific HTML element.
+             * @param {HTMLElement} element - The HTML element to display the message in.
+             * @param {string} message - The message text.
+             * @param {boolean} isError - True for error (red text), false for success (green text).
+             */
+            function displayMessage(element, message, isError = true) {
+                element.textContent = message;
+                element.classList.remove('success', 'error'); // Clear previous states
+                element.classList.add(isError ? 'error' : 'success');
+                element.style.display = message ? 'block' : 'none';
+            }
+
+            /**
+             * Clears a message from a specific HTML element.
+             * @param {HTMLElement} element - The HTML element.
+             */
+            function clearMessage(element) {
+                element.textContent = '';
+                element.classList.remove('success', 'error');
+                element.style.display = 'none';
+            }
+
+            // Function to check admin status and redirect if not admin
+            async function checkAdminAuthAndLoadOrders() {
+                const adminToken = localStorage.getItem('adminToken');
+                const adminUser = JSON.parse(localStorage.getItem('adminUser'));
+
+                if (!adminToken || !adminUser || !adminUser.isAdmin) {
+                    // Not an authenticated admin, redirect to admin login
+                    window.location.href = 'admin_login.html';
+                } else {
+                    // Display admin user info
+                    userNameDisplay.textContent = `Welcome, ${adminUser.name || 'Admin'}`;
+                    userInitialIcon.textContent = (adminUser.name ? adminUser.name.charAt(0) : 'A').toUpperCase();
+                    dropdownUserName.textContent = adminUser.name || 'Admin User';
+                    dropdownUserEmail.textContent = adminUser.email || 'admin@example.com';
+                    await fetchOrders(); // Fetch orders only if admin is authenticated
+                }
+            }
+
+            // Admin Logout functionality
+            adminLogoutBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                localStorage.removeItem('adminToken');
+                localStorage.removeItem('adminUser');
+                window.location.href = 'admin_login.html'; // Redirect to admin login after logout
+            });
+
+            // NEW: Function to get current filter parameters
+            function getCurrentFilterParams() {
+                const params = {};
+
+                // Search input is now separate
+                if (searchInput.value.trim()) {
+                    params.search = searchInput.value.trim();
+                }
+                if (statusFilter.value) {
+                    params.status = statusFilter.value;
+                }
+                if (paymentMethodFilter.value) {
+                    params.paymentMethod = paymentMethodFilter.value;
+                }
+                if (dateFromFilter.value) {
+                    params.dateFrom = dateFromFilter.value;
+                }
+                if (dateToFilter.value) {
+                    params.dateTo = dateToFilter.value;
+                }
+                if (amountMinFilter.value) {
+                    params.amountMin = parseFloat(amountMinFilter.value);
+                }
+                if (amountMaxFilter.value) {
+                    params.amountMax = parseFloat(amountMaxFilter.value);
+                }
+                return params;
+            }
+
+            async function fetchOrders() {
+                clearMessage(adminOrdersMessage);
+                ordersTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Loading orders...</td></tr>'; // Updated colspan
+                const adminToken = localStorage.getItem('adminToken');
+                const filterParams = getCurrentFilterParams();
+
+                // Construct query string from filter parameters
+                const queryString = new URLSearchParams(filterParams).toString();
+                const url = `${API_BASE_URL}/admin/orders${queryString ? '?' + queryString : ''}`;
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        renderOrdersTable(result.orders);
+                        if (result.orders.length === 0) {
+                            displayMessage(adminOrdersMessage, 'No orders found matching your criteria.', false);
+                        }
+                    } else {
+                        displayMessage(adminOrdersMessage, result.message || 'Failed to load orders.', true);
+                        console.error('Error fetching orders:', result.error || result.message);
+                        ordersTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--error-color);">Error loading orders.</td></tr>';
+                    }
+                } catch (error) {
+                    console.error('Network error fetching orders:', error);
+                    displayMessage(adminOrdersMessage, 'Network error. Could not connect to server to load orders.', true);
+                    ordersTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--error-color);">Network error loading orders.</td></tr>';
+                }
+            }
+
+            function renderOrdersTable(orders) {
+                ordersTableBody.innerHTML = ''; // Clear existing rows
+
+                if (orders.length === 0) {
+                    ordersTableBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No orders to display.</td></tr>'; // Updated colspan
+                    return;
+                }
+
+                orders.forEach((order, index) => { // Added index for S.No.
+                    const row = document.createElement('tr');
+
+                    // Format order date
+                    const orderDate = new Date(order.orderDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+
+                    // Concatenate items for display
+                    const itemsSummary = order.items.map(item => `${item.productName} (x${item.quantity})`).join(', ');
+
+                    // Create status dropdown
+                    const statusSelect = document.createElement('select');
+                    statusSelect.classList.add('order-status-select');
+                    statusSelect.setAttribute('data-order-id', order.orderId); // Store orderId on the select
+                    validStatuses.forEach(status => {
+                        const option = document.createElement('option');
+                        option.value = status;
+                        option.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                        if (order.status === status) {
+                            option.selected = true;
+                        }
+                        statusSelect.appendChild(option);
+                    });
+
+                    // Create update button
+                    const updateButton = document.createElement('button');
+                    updateButton.classList.add('status-update-btn');
+                    updateButton.textContent = 'Update';
+                    updateButton.setAttribute('data-order-id', order.orderId); // Store orderId on the button
+
+                    // Disable select and button if the order status is 'delivered' or 'cancelled'
+                    const isFinalStatus = finalStatuses.includes(order.status.toLowerCase());
+                    if (isFinalStatus) {
+                        statusSelect.disabled = true;
+                        updateButton.disabled = true;
+                    } else {
+                        // Initial state for update button: disabled if status is unchanged
+                        updateButton.disabled = (statusSelect.value === order.status);
+
+                        // Listen for changes on the select to enable/disable button
+                        statusSelect.addEventListener('change', function() {
+                            updateButton.disabled = (this.value === order.status);
+                        });
+                    }
+
+
+                    row.innerHTML = `
+                        <td data-label="S.No.">${index + 1}</td> <!-- NEW: S.No. column -->
+                        <td data-label="Order ID" class="order-id">${order.orderId}</td>
+                        <td data-label="Date">${orderDate}</td>
+                        <td data-label="Customer">
+                            ${order.customerInfo.fullName}<br>
+                            <span class="customer-info">${order.customerInfo.email}</span>
+                        </td>
+                        <td data-label="Items">${itemsSummary}</td>
+                        <td data-label="Total">₹${order.grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td data-label="Payment">${order.paymentMethod}</td>
+                        <td data-label="Status"><span class="order-status-badge status-${order.status.toLowerCase()}">${order.status}</span></td>
+                        <td data-label="Action"></td>
+                    `;
+                    // Append select and button to the action cell
+                    row.querySelector('td[data-label="Action"]').appendChild(statusSelect);
+                    row.querySelector('td[data-label="Action"]').appendChild(updateButton);
+
+                    ordersTableBody.appendChild(row);
+                });
+
+                // Add event listeners to all update buttons after rendering
+                // IMPORTANT: The event listener should ALWAYS be attached.
+                // The logic for whether an update is allowed resides within handleUpdateStatus.
+                ordersTableBody.querySelectorAll('.status-update-btn').forEach(button => {
+                    button.addEventListener('click', handleUpdateStatus);
+                });
+            }
+
+            async function handleUpdateStatus(event) {
+                const orderId = event.target.dataset.orderId;
+                const statusSelect = ordersTableBody.querySelector(`select[data-order-id="${orderId}"]`);
+                const newStatus = statusSelect.value;
+                
+                // Find the row containing the clicked button
+                const orderRow = event.target.closest('tr');
+                // Get the original status from the badge within that row
+                const originalStatusElement = orderRow.querySelector('.order-status-badge');
+                const originalStatus = originalStatusElement ? originalStatusElement.textContent.toLowerCase() : '';
+
+
+                // Only proceed if status has actually changed AND it's not a final status
+                if (newStatus === originalStatus) {
+                    displayMessage(adminOrdersMessage, 'Status is already set to ' + newStatus + '.', false);
+                    return;
+                }
+                
+                // Double-check if the current original status is a final status before allowing update
+                if (finalStatuses.includes(originalStatus)) {
+                    displayMessage(adminOrdersMessage, 'Cannot change status for delivered or cancelled orders.', true);
+                    // Ensure elements are disabled if they somehow got re-enabled
+                    event.target.disabled = true;
+                    statusSelect.disabled = true;
+                    return;
+                }
+
+
+                clearMessage(adminOrdersMessage);
+                event.target.disabled = true; // Disable button during update
+
+                const adminToken = localStorage.getItem('adminToken');
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/orders/${orderId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': adminToken
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        displayMessage(adminOrdersMessage, result.message || 'Order status updated successfully!', false);
+                        // Re-fetch orders to update the table with the latest data
+                        await fetchOrders();
+                    } else {
+                        displayMessage(adminOrdersMessage, result.message || 'Failed to update order status.', true);
+                        console.error('Error updating status:', result.error || result.message);
+                        event.target.disabled = false; // Re-enable button on error
+                    }
+                } catch (error) {
+                    console.error('Network error updating status:', error);
+                    displayMessage(adminOrdersMessage, 'Network error. Could not update order status.', true);
+                    event.target.disabled = false; // Re-enable button on network error
+                }
+            }
+
+            // NEW: Event listeners for filter/search buttons
+            searchButton.addEventListener('click', fetchOrders); // Search button click
+            searchInput.addEventListener('keyup', function(event) { // Search on Enter key
+                if (event.key === 'Enter') {
+                    fetchOrders();
+                }
+            });
+
+            toggleFiltersBtn.addEventListener('click', function() {
+                filtersDropdownContent.classList.toggle('show');
+                // Rotate arrow icon
+                const arrowIcon = toggleFiltersBtn.querySelector('.dropdown-arrow');
+                if (filtersDropdownContent.classList.contains('show')) {
+                    arrowIcon.classList.remove('fa-chevron-down');
+                    arrowIcon.classList.add('fa-chevron-up');
+                } else {
+                    arrowIcon.classList.remove('fa-chevron-up');
+                    arrowIcon.classList.add('fa-chevron-down');
+                }
+            });
+
+            // Close dropdown if clicked outside
+            document.addEventListener('click', function(event) {
+                if (!filtersDropdownContent.contains(event.target) && !toggleFiltersBtn.contains(event.target)) {
+                    filtersDropdownContent.classList.remove('show');
+                    toggleFiltersBtn.querySelector('.dropdown-arrow').classList.remove('fa-chevron-up');
+                    toggleFiltersBtn.querySelector('.dropdown-arrow').classList.add('fa-chevron-down');
+                }
+            });
+
+            applyFiltersDropdownBtn.addEventListener('click', function() {
+                fetchOrders();
+                filtersDropdownContent.classList.remove('show'); // Close dropdown after applying
+                toggleFiltersBtn.querySelector('.dropdown-arrow').classList.remove('fa-chevron-up');
+                toggleFiltersBtn.querySelector('.dropdown-arrow').classList.add('fa-chevron-down');
+            });
+
+            clearFiltersDropdownBtn.addEventListener('click', function() {
+                // Clear all filter inputs
+                searchInput.value = '';
+                statusFilter.value = '';
+                paymentMethodFilter.value = '';
+                dateFromFilter.value = '';
+                dateToFilter.value = '';
+                amountMinFilter.value = '';
+                amountMaxFilter.value = '';
+                fetchOrders(); // Re-fetch orders with no filters
+                filtersDropdownContent.classList.remove('show'); // Close dropdown after clearing
+                toggleFiltersBtn.querySelector('.dropdown-arrow').classList.remove('fa-chevron-up');
+                toggleFiltersBtn.querySelector('.dropdown-arrow').classList.add('fa-chevron-down');
+            });
+
+            // Initial load of orders when the page loads
+            checkAdminAuthAndLoadOrders();
+
+            // Mobile menu toggle (existing logic)
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const categoryNav = document.getElementById('categoryNav');
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    categoryNav.classList.toggle('active');
+                    if (categoryNav.classList.contains('active')) {
+                        categoryNav.style.maxHeight = categoryNav.scrollHeight + 'px';
+                        categoryNav.style.overflow = 'visible';
+                        categoryNav.style.padding = '10px 0';
+                    } else {
+                        categoryNav.style.maxHeight = '0';
+                        categoryNav.style.overflow = 'hidden';
+                        categoryNav.style.padding = '0';
+                    }
+                });
+            }
+
+            // Responsive adjustments for category nav (existing logic)
+            const mediaQuery = window.matchMedia('(max-width: 768px)');
+            function handleMediaQueryChange(e) {
+                if (!e.matches) { // If desktop view
+                    categoryNav.style.maxHeight = 'none';
+                    categoryNav.style.overflow = 'visible';
+                    categoryNav.style.padding = '10px 0';
+                    categoryNav.classList.remove('active');
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.display = 'flex';
+                        navLinks.style.flexDirection = 'row';
+                    }
+                } else { // If mobile view
+                    const navLinks = categoryNav.querySelector('.nav-links');
+                    if (navLinks) {
+                        navLinks.style.flexDirection = 'column';
+                        if (!categoryNav.classList.contains('active')) {
+                            categoryNav.style.maxHeight = '0';
+                            categoryNav.style.overflow = 'hidden';
+                            categoryNav.style.padding = '0';
+                        }
+                    }
+                }
+            }
+            mediaQuery.addListener(handleMediaQueryChange);
+            handleMediaQueryChange(mediaQuery); // Initial check
+        });
+    </script>
+</body>
+</html>
