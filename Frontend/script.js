@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Base URL for your backend API
-    const API_BASE_URL = 'http://localhost:3000'; // Make sure this matches your backend server URL
+    const API_BASE_URL = 'https://laptop-store-backend.onrender.com'; // Make sure this matches your backend server URL
 
     // --- Global Helper Functions for Messages ---
 
