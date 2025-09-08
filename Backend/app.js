@@ -36,10 +36,19 @@ const razorpayInstance = new Razorpay({
 // Middleware
 // Explicitly configure CORS
 app.use(cors({
-    origin: ['http://localhost:5500', 'https://laptop-store-drab.vercel.app'], // Allow requests from your Live Server
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Added PATCH for update operations
-    allowedHeaders: ['Content-Type', 'x-auth-token'], // Ensure custom headers like x-auth-token are allowed
+    origin: function (origin, callback) {
+        const allowedOrigins = ['http://localhost:5500', 'https://laptop-store-drab.vercel.app'];
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'x-auth-token'],
+    credentials: true
 }));
+
 app.use(express.json());
 
 // Connect to MongoDB
