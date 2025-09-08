@@ -36,7 +36,7 @@ const razorpayInstance = new Razorpay({
 // Middleware
 // Explicitly configure CORS
 app.use(cors({
-    origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], // Allow requests from your Live Server
+    origin: ['http://localhost:5500', 'https://laptop-store-drab.vercel.app'], // Allow requests from your Live Server
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Added PATCH for update operations
     allowedHeaders: ['Content-Type', 'x-auth-token'], // Ensure custom headers like x-auth-token are allowed
 }));
