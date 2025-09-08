@@ -35,18 +35,29 @@ const razorpayInstance = new Razorpay({
 
 // Middleware
 // Explicitly configure CORS
+const allowedOrigins = [
+  "http://localhost:5500",
+  "https://laptop-store-drab.vercel.app",
+  "https://frontend-six-azure-35.vercel.app",
+  "https://new-laptop-store.onrender.com",
+  "https://laptop-store-p5br.onrender.com"
+];
+
 app.use(cors({
-    origin: [
-    'http://localhost:5500',
-    'https://laptop-store-drab.vercel.app',
-    'https://frontend-six-azure-35.vercel.app',
-    'https://new-laptop-store.onrender.com',
-    'https://laptop-store-p5br.onrender.com'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization', 'Accept'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-auth-token", "Authorization", "Accept"],
   credentials: true
 }));
+
+// Explicitly handle preflight OPTIONS
+app.options("*", cors());
 
 app.use(express.json());
 
