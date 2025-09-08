@@ -43,7 +43,7 @@ const allowedOrigins = [
   "https://laptop-store-p5br.onrender.com"
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -54,10 +54,10 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "x-auth-token", "Authorization", "Accept"],
   credentials: true
-}));
+};
 
-// Explicitly handle preflight OPTIONS
-app.options("*", cors());
+app.use(cors(corsOptions));
+app.options("/*", cors(corsOptions));
 
 app.use(express.json());
 
