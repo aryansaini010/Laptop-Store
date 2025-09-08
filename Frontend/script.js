@@ -608,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (isValid) {
                     try {
-                        const response = await fetch(`${API_BASE_URL}/login`, {
+                        const response = await fetch("https://laptop-store-backend.onrender.com/login", {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
