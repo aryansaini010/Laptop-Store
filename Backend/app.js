@@ -37,7 +37,7 @@ const razorpayInstance = new Razorpay({
 // Explicitly configure CORS
 app.use(cors({
     origin: function (origin, callback) {
-        const allowedOrigins = ['http://localhost:5500', 'https://laptop-store-drab.vercel.app',"https://frontend-six-azure-35.vercel.app"];
+        const allowedOrigins = ['http://localhost:5500', 'https://laptop-store-drab.vercel.app',"https://frontend-six-azure-35.vercel.app","https://new-laptop-store.onrender.com","https://laptop-store-p5br.onrender.com"];
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
