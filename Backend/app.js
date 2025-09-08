@@ -29,8 +29,8 @@ const JWT_SECRET = 'yourSecretKeyHere'; // IMPORTANT: Use a strong, environment-
 
 // Initialize Razorpay (WITH YOUR ACTUAL KEYS - replace with secure method in production)
 const razorpayInstance = new Razorpay({
-    key_id: 'rzp_test_fSRQZcG87Hnjz5', // YOUR ACTUAL RAZORPAY KEY ID
-    key_secret: 'U14zRMZRcYudFyBg6N6ZLNzG' // YOUR ACTUAL RAZORPAY KEY SECRET
+   key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
 // Middleware
